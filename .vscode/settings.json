@@ -1,0 +1,15 @@
+{
+  "terminal.integrated.profiles.windows": {
+    "ServiceHub (Node 22)": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        ". '${workspaceFolder}/scripts/ensure-node.ps1'"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "ServiceHub (Node 22)"
+}
