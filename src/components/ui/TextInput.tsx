@@ -133,6 +133,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 14,
     includeFontPadding: false,
-    fontFamily: 'PlusJakartaSans_400Regular',
+    fontFamily: 'Arial',
   },
 });

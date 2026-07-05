@@ -15,12 +15,15 @@ export function SectionHeader({ title, actionLabel, onAction }: SectionHeaderPro
 
   return (
     <View style={styles.row}>
-      <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '600' }}>
-        {title}
-      </Text>
+      <View style={styles.titleWrap}>
+        <View style={[styles.accent, { backgroundColor: colors.primary }]} />
+        <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+          {title}
+        </Text>
+      </View>
       {actionLabel && onAction ? (
         <Pressable onPress={onAction} hitSlop={8}>
-          <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '500' }}>
+          <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '600' }}>
             {actionLabel}
           </Text>
         </Pressable>
@@ -36,5 +39,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginBottom: 12,
+  },
+  titleWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  accent: {
+    width: 4,
+    height: 18,
+    borderRadius: 2,
   },
 });

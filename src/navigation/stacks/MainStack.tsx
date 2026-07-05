@@ -1,11 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { dashboardScreenOptions, mainStackScreenOptions } from '@/navigation/config';
-import {
-  AdminDashboardScreen,
-  CustomerDashboardScreen,
-  ProviderDashboardScreen,
-} from '@/screens/main';
+import { AdminDashboardScreen, CustomerDashboardScreen } from '@/screens/main';
+import { ProviderTabs } from '@/navigation/tabs/ProviderTabs';
 import type { MainStackParamList } from '@/navigation/types';
 
 import { MainTabs } from '../tabs/MainTabs';
@@ -16,15 +13,11 @@ export function MainStack() {
   return (
     <Stack.Navigator initialRouteName="MainTabs" screenOptions={mainStackScreenOptions}>
       <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="ProviderTabs" component={ProviderTabs} options={{ headerShown: false }} />
       <Stack.Screen
         name="CustomerDashboard"
         component={CustomerDashboardScreen}
         options={{ ...dashboardScreenOptions, title: 'Customer Dashboard' }}
-      />
-      <Stack.Screen
-        name="ProviderDashboard"
-        component={ProviderDashboardScreen}
-        options={{ ...dashboardScreenOptions, title: 'Provider Dashboard' }}
       />
       <Stack.Screen
         name="AdminDashboard"

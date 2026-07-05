@@ -1,1 +1,1 @@
-export { navigateToAuth, navigateToMain } from './navigationHelpers';
+export { navigateToAuth, navigateToMain, navigateToProviderMain } from './navigationHelpers';

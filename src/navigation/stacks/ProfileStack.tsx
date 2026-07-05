@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { customerStackScreenOptions } from '@/navigation/config';
 import {
   ProfileScreen,
+  EditProfileScreen,
   ReviewsScreen,
   SettingsScreen,
   HelpSupportScreen,
@@ -15,6 +16,11 @@ export function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={customerStackScreenOptions}>
       <Stack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: 'Edit Profile' }}
+      />
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
       <Stack.Screen
         name="HelpSupport"

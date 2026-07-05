@@ -15,7 +15,32 @@ export function navigateToMain(navigation: NavigationProp<ParamListBase>) {
   getRootNavigation(navigation)?.dispatch(
     CommonActions.reset({
       index: 0,
-      routes: [{ name: 'Main' }],
+      routes: [
+        {
+          name: 'Main',
+          state: {
+            index: 0,
+            routes: [{ name: 'MainTabs' }],
+          },
+        },
+      ],
+    }),
+  );
+}
+
+export function navigateToProviderMain(navigation: NavigationProp<ParamListBase>) {
+  getRootNavigation(navigation)?.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Main',
+          state: {
+            index: 0,
+            routes: [{ name: 'ProviderTabs' }],
+          },
+        },
+      ],
     }),
   );
 }

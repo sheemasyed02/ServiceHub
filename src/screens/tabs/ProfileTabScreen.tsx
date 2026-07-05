@@ -28,7 +28,7 @@ export function ProfileTabScreen({ navigation }: Props) {
         <Button mode="contained" onPress={() => navigation.navigate('CustomerDashboard')}>
           Customer Dashboard
         </Button>
-        <Button mode="outlined" onPress={() => navigation.navigate('ProviderDashboard')}>
+        <Button mode="outlined" onPress={() => navigation.navigate('ProviderTabs')}>
           Provider Dashboard
         </Button>
         <Button mode="outlined" onPress={() => navigation.navigate('AdminDashboard')}>

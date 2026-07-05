@@ -3,7 +3,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   CategoryScroller,
@@ -13,85 +12,92 @@ import {
   SectionHeader,
 } from '@/components/customer';
 import { Avatar, SearchBar } from '@/components/ui';
-import { MOCK_OFFERS, MOCK_PROVIDERS, MOCK_USER } from '@/constants/customer';
+import { MOCK_OFFERS, MOCK_PROVIDERS } from '@/constants/customer';
 import { MOCK_IMAGES } from '@/constants/customer/images';
-import { useAppTheme } from '@/hooks';
+import { useAppTheme, useCustomerUser } from '@/hooks';
 import type { HomeStackParamList } from '@/navigation/types/customer.types';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
 
 export function HomeScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
+  const user = useCustomerUser();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const firstName = MOCK_USER.name.split(' ')[0];
-  const insets = useSafeAreaInsets();
+  const firstName = user.name.split(' ')[0];
 
-  return (
-    <CustomerScreen edges={[]}>
-      <LinearGradient
-        colors={['#FFFBEB', '#F8F9FA']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={[styles.heroGradient, { paddingTop: insets.top + 8 }]}
-      >
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View style={{ flex: 1 }}>
-              <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
-                {greeting}
-              </Text>
-              <Text variant="headlineSmall" style={{ color: colors.textPrimary }}>
-                Hi, {firstName}
-              </Text>
-            </View>
-            <Pressable onPress={() => navigation.getParent()?.navigate('Profile')}>
-              <Avatar source={{ uri: MOCK_IMAGES.userAvatar }} name={MOCK_USER.name} size="md" />
-            </Pressable>
-          </View>
-
-          <Pressable
-            style={[
-              styles.locationChip,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
-          >
-            <MaterialCommunityIcons name="map-marker" size={16} color={colors.primaryDark} />
-            <Text
-              variant="labelLarge"
-              style={{ color: colors.textPrimary, flex: 1 }}
-              numberOfLines={1}
-            >
-              {MOCK_USER.location}
+  const header = (
+    <LinearGradient
+      colors={['#FFF4D6', '#F4F6FA']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.heroGradient}
+    >
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View style={{ flex: 1 }}>
+            <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
+              {greeting}
             </Text>
-            <MaterialCommunityIcons name="chevron-down" size={18} color={colors.textTertiary} />
-          </Pressable>
-
-          <Pressable onPress={() => navigation.navigate('Search')} style={styles.search}>
-            <SearchBar
-              placeholder="What do you need help with?"
-              editable={false}
-              pointerEvents="none"
-            />
+            <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+              Hi, {firstName}
+            </Text>
+          </View>
+          <Pressable onPress={() => navigation.getParent()?.navigate('Profile')}>
+            <Avatar source={{ uri: MOCK_IMAGES.userAvatar }} name={user.name} size="md" />
           </Pressable>
         </View>
-      </LinearGradient>
 
+        <Pressable
+          style={[
+            styles.locationChip,
+            { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.sm },
+          ]}
+        >
+          <MaterialCommunityIcons name="map-marker" size={16} color={colors.primaryDark} />
+          <Text
+            variant="labelLarge"
+            style={{ color: colors.textPrimary, flex: 1 }}
+            numberOfLines={1}
+          >
+            {user.location}
+          </Text>
+          <MaterialCommunityIcons name="chevron-down" size={18} color={colors.textTertiary} />
+        </Pressable>
+
+        <Pressable onPress={() => navigation.navigate('Search')} style={styles.search}>
+          <SearchBar
+            placeholder="What do you need help with?"
+            editable={false}
+            pointerEvents="none"
+          />
+        </Pressable>
+      </View>
+    </LinearGradient>
+  );
+
+  return (
+    <CustomerScreen fixedHeader={header}>
       <View style={styles.quickRow}>
         {QUICK_ACTIONS.map((action) => (
           <Pressable
             key={action.label}
-            onPress={() => navigation.navigate('ProviderListing', { categoryTitle: action.label })}
+            onPress={() =>
+              navigation.navigate('ProviderListing', {
+                categoryId: action.categoryId,
+                categoryTitle: action.label,
+              })
+            }
             style={[
               styles.quickChip,
-              { backgroundColor: colors.surface, borderColor: colors.border },
+              { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.xs },
             ]}
           >
-            <View style={[styles.quickIcon, { backgroundColor: `${colors.primary}14` }]}>
+            <View style={[styles.quickIcon, { backgroundColor: action.tint }]}>
               <MaterialCommunityIcons name={action.icon} size={18} color={colors.primaryDark} />
             </View>
-            <Text variant="labelMedium" style={{ color: colors.textPrimary }}>
+            <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '600' }}>
               {action.label}
             </Text>
           </Pressable>
@@ -117,7 +123,7 @@ export function HomeScreen({ navigation }: Props) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.hScroll}
       >
-        {MOCK_PROVIDERS.slice(0, 4).map((p) => (
+        {MOCK_PROVIDERS.slice(0, 5).map((p) => (
           <ProviderCard
             key={p.id}
             provider={p}
@@ -136,7 +142,7 @@ export function HomeScreen({ navigation }: Props) {
         onAction={() => navigation.navigate('ProviderListing', {})}
       />
       <View style={styles.list}>
-        {MOCK_PROVIDERS.map((p) => (
+        {MOCK_PROVIDERS.slice(0, 3).map((p) => (
           <ProviderCard
             key={p.id}
             provider={p}
@@ -161,62 +167,52 @@ export function HomeScreen({ navigation }: Props) {
 }
 
 const QUICK_ACTIONS = [
-  { label: 'Plumber', icon: 'pipe-wrench' as const },
-  { label: 'Electrician', icon: 'flash' as const },
-  { label: 'Cleaning', icon: 'broom' as const },
-  { label: 'AC Repair', icon: 'air-conditioner' as const },
+  { label: 'Plumber', icon: 'pipe-wrench' as const, categoryId: 'plumber', tint: '#EFF6FF' },
+  { label: 'Electrician', icon: 'flash' as const, categoryId: 'electrician', tint: '#FEF9C3' },
+  { label: 'Cleaning', icon: 'broom' as const, categoryId: 'cleaner', tint: '#ECFDF5' },
+  { label: 'Salon', icon: 'content-cut' as const, categoryId: 'salon', tint: '#FDF2F8' },
 ];
 
 const styles = StyleSheet.create({
-  heroGradient: {
-    marginBottom: 8,
-  },
-  header: {
-    paddingHorizontal: 20,
-    gap: 14,
-    paddingBottom: 8,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
+  heroGradient: { paddingBottom: 4 },
+  header: { paddingHorizontal: 20, gap: 14, paddingBottom: 12, paddingTop: 8 },
+  headerTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   locationChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 11,
+    borderRadius: 14,
     borderWidth: 1,
   },
-  search: {
-    marginTop: 2,
-  },
+  search: { marginTop: 2 },
   quickRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginTop: 16,
+    marginBottom: 22,
   },
   quickChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 11,
+    borderRadius: 14,
     borderWidth: 1,
+    width: '47%',
   },
   quickIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: 34,
+    height: 34,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   spacer: { height: 22 },
   hScroll: { paddingHorizontal: 20, gap: 12 },
-  list: { paddingHorizontal: 20, gap: 10 },
+  list: { paddingHorizontal: 20, gap: 12 },
 });

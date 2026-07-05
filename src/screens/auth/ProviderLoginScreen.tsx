@@ -7,7 +7,7 @@ import { Text } from 'react-native-paper';
 import { AuthScreenLayout, ProviderBrandHeader } from '@/components/auth';
 import { LoadingButton, PasswordInput, SecondaryButton, TextInput } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
-import { navigateToMain } from '@/navigation/utils';
+import { navigateToProviderMain } from '@/navigation/utils';
 import type { AuthStackParamList } from '@/navigation/types';
 import type { ProviderLoginFormValues } from '@/types/forms';
 import { validationRules } from '@/utils/validation';
@@ -33,7 +33,7 @@ export function ProviderLoginScreen({ navigation }: Props) {
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
-      navigateToMain(navigation);
+      navigateToProviderMain(navigation);
     }, 900);
   };
 

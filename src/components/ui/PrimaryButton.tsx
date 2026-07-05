@@ -135,6 +135,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: '700',
     letterSpacing: 0.2,
-    fontFamily: 'PlusJakartaSans_600SemiBold',
+    fontFamily: 'Arial',
   },
 });

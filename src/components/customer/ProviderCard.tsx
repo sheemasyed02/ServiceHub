@@ -17,7 +17,7 @@ export type ProviderCardProps = {
 
 export function ProviderCard({ provider, layout = 'list', onPress, onBook }: ProviderCardProps) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
   const images = getProviderImages(provider.id);
   const avatarSource = images?.avatar ? { uri: images.avatar } : undefined;
   const scale = useRef(new Animated.Value(1)).current;
@@ -36,6 +36,7 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
           style={[
             styles.compact,
             { transform: [{ scale }], backgroundColor: colors.surface, borderColor: colors.border },
+            shadows.sm,
           ]}
         >
           <AppImage
@@ -72,6 +73,7 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
         style={[
           styles.card,
           { transform: [{ scale }], backgroundColor: colors.surface, borderColor: colors.border },
+          shadows.sm,
         ]}
       >
         <Avatar source={avatarSource} name={provider.name} size="lg" />
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 14,
     padding: 14,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
   },
   body: { flex: 1, gap: 4 },

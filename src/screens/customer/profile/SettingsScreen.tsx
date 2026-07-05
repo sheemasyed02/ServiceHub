@@ -17,7 +17,7 @@ export function SettingsScreen({ navigation }: Props) {
   const [notifications, setNotifications] = useState(true);
 
   return (
-    <CustomerScreen>
+    <CustomerScreen edges={['left', 'right']}>
       <View style={[styles.section, { backgroundColor: colors.surface }]}>
         <SettingToggle
           icon="theme-light-dark"

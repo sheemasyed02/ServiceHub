@@ -15,6 +15,7 @@ export type BookingsStackParamList = {
 
 export type ProfileStackParamList = {
   ProfileMain: undefined;
+  EditProfile: undefined;
   Settings: undefined;
   HelpSupport: undefined;
   Reviews: undefined;

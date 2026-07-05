@@ -7,7 +7,7 @@ import { Text } from 'react-native-paper';
 import { FilterSheet, SortSheet } from '@/components/bottom-sheets';
 import { CustomerScreen, ProviderCard } from '@/components/customer';
 import { EmptyState, SearchBar } from '@/components/ui';
-import { FILTER_OPTIONS, MOCK_PROVIDERS, SORT_OPTIONS } from '@/constants/customer';
+import { FILTER_OPTIONS, getProvidersByCategory, SORT_OPTIONS } from '@/constants/customer';
 import { useAppTheme } from '@/hooks';
 import type { HomeStackParamList } from '@/navigation/types/customer.types';
 
@@ -17,7 +17,7 @@ type LayoutMode = 'list' | 'compact';
 
 export function ProviderListingScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortKey>('rating');
   const [sortId, setSortId] = useState('rating');
@@ -28,16 +28,12 @@ export function ProviderListingScreen({ navigation, route }: Props) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
+  const categoryId = route.params?.categoryId;
   const categoryTitle = route.params?.categoryTitle;
 
   const providers = useMemo(() => {
-    let list = [...MOCK_PROVIDERS];
-    if (categoryTitle) {
-      list = list.filter((p) =>
-        p.profession.toLowerCase().includes(categoryTitle.toLowerCase().split(' ')[0]),
-      );
-      if (list.length === 0) list = [...MOCK_PROVIDERS];
-    }
+    let list = getProvidersByCategory(categoryId);
+
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter(
@@ -50,7 +46,7 @@ export function ProviderListingScreen({ navigation, route }: Props) {
     if (sort === 'rating') list.sort((a, b) => b.rating - a.rating);
     if (sort === 'price') list.sort((a, b) => a.priceFrom - b.priceFrom);
     return list;
-  }, [categoryTitle, query, sort, filterIds]);
+  }, [categoryId, query, sort, filterIds]);
 
   const loadMore = () => {
     if (loading) return;
@@ -61,11 +57,42 @@ export function ProviderListingScreen({ navigation, route }: Props) {
     }, 800);
   };
 
+  const screenTitle = categoryTitle ? categoryTitle : categoryId ? 'Providers' : 'All Providers';
+
   return (
     <CustomerScreen scroll={false} bottomPadding={0}>
+      <View style={styles.topBar}>
+        <Pressable
+          onPress={() => navigation.goBack()}
+          hitSlop={12}
+          style={[styles.backBtn, { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.xs }]}
+        >
+          <MaterialCommunityIcons name="arrow-left" size={22} color={colors.textPrimary} />
+        </Pressable>
+      </View>
+
+      <View style={styles.header}>
+        {categoryId ? (
+          <View style={[styles.categoryBadge, { backgroundColor: `${colors.primary}18` }]}>
+            <MaterialCommunityIcons name="shape-outline" size={14} color={colors.primaryDark} />
+            <Text variant="labelSmall" style={{ color: colors.primaryDark, fontWeight: '600' }}>
+              Category
+            </Text>
+          </View>
+        ) : null}
+        <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+          {screenTitle}
+        </Text>
+        {categoryId ? (
+          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
+            {providers.length} provider{providers.length === 1 ? '' : 's'} available
+          </Text>
+        ) : null}
+      </View>
+
       <View style={styles.toolbar}>
         <SearchBar
-          placeholder="Search providers..."
+          placeholder={`Search ${categoryTitle?.toLowerCase() ?? 'providers'}...`}
           value={query}
           onChangeText={setQuery}
           containerStyle={{ flex: 1 }}
@@ -89,8 +116,18 @@ export function ProviderListingScreen({ navigation, route }: Props) {
       {providers.length === 0 ? (
         <EmptyState
           icon="account-search"
-          title="No providers found"
-          description="Try adjusting filters or search."
+          title={categoryTitle ? `No ${categoryTitle} providers` : 'No providers found'}
+          description={
+            categoryId
+              ? 'No providers in this category yet. Try another category.'
+              : 'Try adjusting filters or search.'
+          }
+          actionLabel={categoryId ? 'Browse all' : undefined}
+          onAction={
+            categoryId
+              ? () => navigation.setParams({ categoryId: undefined, categoryTitle: undefined })
+              : undefined
+          }
         />
       ) : (
         <FlatList
@@ -120,7 +157,7 @@ export function ProviderListingScreen({ navigation, route }: Props) {
                 variant="bodySmall"
                 style={{ textAlign: 'center', color: colors.textTertiary, marginVertical: 16 }}
               >
-                Page {page} · Pull for more
+                Page {page}
               </Text>
             )
           }
@@ -178,6 +215,32 @@ function FilterChip({
 }
 
 const styles = StyleSheet.create({
+  topBar: {
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    gap: 6,
+  },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
   toolbar: {
     paddingHorizontal: 20,
     paddingBottom: 12,
@@ -202,14 +265,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     gap: 10,
   },
-  listItem: {
-    marginBottom: 14,
-  },
-  gridRow: {
-    gap: 12,
-  },
-  gridItem: {
-    flex: 1,
-    marginBottom: 12,
-  },
+  listItem: { marginBottom: 14 },
+  gridRow: { gap: 12 },
+  gridItem: { flex: 1, marginBottom: 12 },
 });

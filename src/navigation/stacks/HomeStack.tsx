@@ -21,7 +21,7 @@ export function HomeStack() {
       <Stack.Screen
         name="ProviderListing"
         component={ProviderListingScreen}
-        options={{ title: 'Providers' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ProviderProfile"

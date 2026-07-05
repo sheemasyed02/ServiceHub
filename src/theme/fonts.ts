@@ -1,20 +1,16 @@
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from '@expo-google-fonts/plus-jakarta-sans';
+import { Platform } from 'react-native';
+
+const ARIAL = Platform.select({
+  ios: 'Arial',
+  android: 'sans-serif',
+  default: 'Arial',
+}) as string;
 
 export const appFontFamily = {
-  regular: 'PlusJakartaSans_400Regular',
-  medium: 'PlusJakartaSans_500Medium',
-  semibold: 'PlusJakartaSans_600SemiBold',
-  bold: 'PlusJakartaSans_700Bold',
+  regular: ARIAL,
+  medium: ARIAL,
+  semibold: ARIAL,
+  bold: ARIAL,
 } as const;
 
-export const appFonts = {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-};
+export const appFonts = {};

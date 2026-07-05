@@ -24,6 +24,7 @@ export type Provider = {
   id: string;
   name: string;
   profession: string;
+  categoryId: string;
   experience: string;
   rating: number;
   reviewCount: number;

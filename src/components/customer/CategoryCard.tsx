@@ -26,7 +26,7 @@ export type CategoryCardProps = {
 
 export function CategoryCard({ category, selected = false, onPress }: CategoryCardProps) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
   const tint = CATEGORY_TINTS[category.id] ?? colors.surfaceVariant;
 
   return (
@@ -35,9 +35,10 @@ export function CategoryCard({ category, selected = false, onPress }: CategoryCa
       style={[
         styles.card,
         {
-          backgroundColor: selected ? `${colors.primary}12` : colors.surface,
+          backgroundColor: selected ? `${colors.primary}14` : colors.surface,
           borderColor: selected ? colors.primary : colors.border,
         },
+        shadows.xs,
       ]}
     >
       <View style={[styles.iconWrap, { backgroundColor: tint }]}>
@@ -60,18 +61,18 @@ export function CategoryCard({ category, selected = false, onPress }: CategoryCa
 
 const styles = StyleSheet.create({
   card: {
-    width: 80,
-    paddingVertical: 12,
-    paddingHorizontal: 6,
-    borderRadius: 14,
+    width: 88,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },

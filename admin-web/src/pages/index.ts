@@ -1,0 +1,16 @@
+export { DashboardPage } from './dashboard/DashboardPage';
+export { UsersPage } from './users/UsersPage';
+export { ProvidersPage } from './providers/ProvidersPage';
+export { ProviderVerificationPage } from './providers/ProviderVerificationPage';
+export { ProviderDetailsPage } from './providers/ProviderDetailsPage';
+export { BookingsPage } from './bookings/BookingsPage';
+export { BookingDetailsPage } from './bookings/BookingDetailsPage';
+export { PaymentsPage } from './payments/PaymentsPage';
+export { ReviewsPage } from './reviews/ReviewsPage';
+export { CategoriesPage } from './categories/CategoriesPage';
+export { ReportsPage } from './reports/ReportsPage';
+export { NotificationsPage } from './notifications/NotificationsPage';
+export { DisputesPage } from './disputes/DisputesPage';
+export { SupportTicketsPage } from './support/SupportTicketsPage';
+export { SettingsPage } from './settings/SettingsPage';
+export { ProfilePage } from './profile/ProfilePage';

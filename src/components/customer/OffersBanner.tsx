@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
@@ -13,16 +14,21 @@ export type OffersBannerProps = {
 
 export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerProps) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
 
   return (
-    <Pressable onPress={onPress} style={styles.wrap}>
+    <Pressable onPress={onPress} style={[styles.wrap, shadows.md]}>
       <ImageBackground
         source={{ uri: MOCK_IMAGES.offerBanner }}
         style={styles.banner}
         imageStyle={styles.bannerImage}
       >
-        <View style={styles.overlay} />
+        <LinearGradient
+          colors={['rgba(196, 160, 32, 0.85)', 'rgba(17, 24, 39, 0.75)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.overlay}
+        />
         <View style={styles.content}>
           <Text variant="labelSmall" style={{ color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>
             Limited offer
@@ -49,20 +55,19 @@ export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerPro
 const styles = StyleSheet.create({
   wrap: {
     marginHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   banner: {
-    minHeight: 120,
+    minHeight: 132,
     justifyContent: 'flex-end',
   },
   bannerImage: {
-    borderRadius: 12,
+    borderRadius: 16,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(17, 24, 39, 0.55)',
-    borderRadius: 12,
+    borderRadius: 16,
   },
   content: {
     padding: 16,

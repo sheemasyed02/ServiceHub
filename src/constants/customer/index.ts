@@ -10,6 +10,7 @@ export {
   getBookingById,
   getProviderById,
 } from './mockData';
+export { getProvidersByCategory, getCategoryTitle, QUICK_ACTION_CATEGORY_MAP } from './providers';
 export {
   BOOKING_DATES,
   BOOKING_TIMES,

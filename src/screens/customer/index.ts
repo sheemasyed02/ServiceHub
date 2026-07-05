@@ -9,6 +9,7 @@ export { BookingDetailsScreen } from './bookings/BookingDetailsScreen';
 export { LiveTrackingScreen } from './bookings/LiveTrackingScreen';
 export { NotificationsScreen } from './notifications/NotificationsScreen';
 export { ProfileScreen } from './profile/ProfileScreen';
+export { EditProfileScreen } from './profile/EditProfileScreen';
 export { SettingsScreen } from './profile/SettingsScreen';
 export { HelpSupportScreen } from './profile/HelpSupportScreen';
 export { ReviewsScreen } from './profile/ReviewsScreen';

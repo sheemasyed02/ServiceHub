@@ -7,7 +7,7 @@ import { Text } from 'react-native-paper';
 import { AuthScreenLayout } from '@/components/auth';
 import { LoadingButton, OtpInput } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
-import { navigateToMain } from '@/navigation/utils';
+import { navigateToMain, navigateToProviderMain } from '@/navigation/utils';
 import type { AuthStackParamList } from '@/navigation/types';
 import type { OtpFormValues } from '@/types/forms';
 
@@ -55,7 +55,7 @@ export function OTPScreen({ navigation, route }: Props) {
         return;
       }
       if (role === 'provider') {
-        navigation.replace('ProviderLogin');
+        navigateToProviderMain(navigation);
         return;
       }
       navigateToMain(navigation);
