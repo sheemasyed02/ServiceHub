@@ -18,19 +18,19 @@ export const colors = {
   onSecondaryContainer: '#1A1814',
 
   // Surfaces
-  background: '#FFFFFF',
-  onBackground: '#18181B',
+  background: '#F8F9FA',
+  onBackground: '#111827',
   surface: '#FFFFFF',
-  onSurface: '#18181B',
-  surfaceVariant: '#F4F4F5',
-  onSurfaceVariant: '#52525B',
+  onSurface: '#111827',
+  surfaceVariant: '#F3F4F6',
+  onSurfaceVariant: '#6B7280',
   surfaceElevated: '#FFFFFF',
   surfaceDisabled: 'rgba(24, 24, 27, 0.06)',
   onSurfaceDisabled: 'rgba(24, 24, 27, 0.38)',
 
   // Input
   inputBackground: '#FFFFFF',
-  inputBorder: '#E4E4E7',
+  inputBorder: '#E5E7EB',
   inputBorderFocus: '#C4A020',
   placeholder: '#71717A',
 
@@ -51,16 +51,16 @@ export const colors = {
   onWarningContainer: '#9A3412',
 
   // Borders & dividers
-  border: '#E4E4E7',
-  borderLight: '#F0F0F2',
-  outline: '#D4D4D8',
-  outlineVariant: '#E4E4E7',
-  divider: '#F0F0F2',
+  border: '#E5E7EB',
+  borderLight: '#F3F4F6',
+  outline: '#D1D5DB',
+  outlineVariant: '#E5E7EB',
+  divider: '#F3F4F6',
 
   // Text hierarchy
-  textPrimary: '#18181B',
-  textSecondary: '#52525B',
-  textTertiary: '#A1A1AA',
+  textPrimary: '#111827',
+  textSecondary: '#6B7280',
+  textTertiary: '#9CA3AF',
   textInverse: '#FFFFFF',
   textLink: '#9A7B18',
 

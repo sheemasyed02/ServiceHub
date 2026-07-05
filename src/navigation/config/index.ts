@@ -1,5 +1,6 @@
 export {
   authStackScreenOptions,
+  customerStackScreenOptions,
   dashboardScreenOptions,
   defaultStackScreenOptions,
   mainStackScreenOptions,

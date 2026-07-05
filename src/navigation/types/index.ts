@@ -9,6 +9,11 @@ export type RootStackParamList = {
 };
 
 export type { AuthStackParamList } from './auth.types';
+export type {
+  BookingsStackParamList,
+  HomeStackParamList,
+  ProfileStackParamList,
+} from './customer.types';
 export type { MainStackParamList } from './main.types';
 export type { MainTabParamList } from './tabs.types';
 

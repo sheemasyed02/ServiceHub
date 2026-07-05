@@ -29,3 +29,8 @@ export const dashboardScreenOptions: NativeStackNavigationOptions = {
   ...defaultStackScreenOptions,
   presentation: 'card',
 };
+
+export const customerStackScreenOptions: NativeStackNavigationOptions = {
+  ...defaultStackScreenOptions,
+  animation: 'slide_from_right',
+};

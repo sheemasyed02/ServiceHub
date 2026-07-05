@@ -1,3 +1,6 @@
+export { AppImage } from './AppImage';
+export type { AppImageProps } from './AppImage';
+
 export { Avatar } from './Avatar';
 export type { AvatarProps, AvatarSize } from './Avatar';
 

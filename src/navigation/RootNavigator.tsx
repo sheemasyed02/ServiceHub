@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { defaultStackScreenOptions } from '@/navigation/config';
 import { AuthStack, MainStack } from '@/navigation/stacks';
 import type { RootStackParamList } from '@/navigation/types';
-import { theme } from '@/theme';
+import { theme, appFontFamily } from '@/theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,10 +22,10 @@ export function RootNavigator() {
           notification: theme.tokens.colors.secondary,
         },
         fonts: {
-          regular: { fontFamily: 'System', fontWeight: '400' },
-          medium: { fontFamily: 'System', fontWeight: '500' },
-          bold: { fontFamily: 'System', fontWeight: '700' },
-          heavy: { fontFamily: 'System', fontWeight: '800' },
+          regular: { fontFamily: appFontFamily.regular, fontWeight: '400' },
+          medium: { fontFamily: appFontFamily.medium, fontWeight: '500' },
+          bold: { fontFamily: appFontFamily.bold, fontWeight: '700' },
+          heavy: { fontFamily: appFontFamily.bold, fontWeight: '800' },
         },
       }}
     >

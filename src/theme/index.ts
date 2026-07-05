@@ -4,8 +4,9 @@ export type { AppColors, ColorToken } from './colors';
 export { spacing, borderRadius, layout } from './spacing';
 export type { AppSpacing, AppBorderRadius, AppLayout } from './spacing';
 
+export { appFontFamily, appFonts } from './fonts';
+
 export {
-  fontFamily,
   fontWeight,
   fontSize,
   lineHeight,

@@ -1,11 +1,6 @@
-import { Platform } from 'react-native';
 import { configureFonts } from 'react-native-paper';
 
-export const fontFamily = Platform.select({
-  ios: 'System',
-  android: 'Roboto',
-  default: 'System',
-}) as string;
+import { appFontFamily } from './fonts';
 
 export const fontWeight = {
   regular: '400' as const,
@@ -28,119 +23,118 @@ export const fontSize = {
 } as const;
 
 export const lineHeight = {
-  tight: 1.2,
+  tight: 1.25,
   snug: 1.35,
   normal: 1.5,
-  relaxed: 1.65,
+  relaxed: 1.6,
 } as const;
 
 export const letterSpacing = {
-  tight: -0.4,
+  tight: -0.5,
   normal: 0,
-  wide: 0.25,
-  wider: 0.5,
-  widest: 1.2,
+  wide: 0.15,
+  wider: 0.3,
 } as const;
 
 /** Raw typography tokens for custom components. */
 export const typography = {
   displayLarge: {
-    fontFamily,
+    fontFamily: appFontFamily.bold,
     fontSize: fontSize.hero,
     fontWeight: fontWeight.bold,
     lineHeight: fontSize.hero * lineHeight.tight,
     letterSpacing: letterSpacing.tight,
   },
   displayMedium: {
-    fontFamily,
+    fontFamily: appFontFamily.bold,
     fontSize: fontSize.display,
     fontWeight: fontWeight.bold,
     lineHeight: fontSize.display * lineHeight.tight,
     letterSpacing: letterSpacing.tight,
   },
   headlineLarge: {
-    fontFamily,
+    fontFamily: appFontFamily.bold,
     fontSize: fontSize.xxxl,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.bold,
     lineHeight: fontSize.xxxl * lineHeight.snug,
     letterSpacing: letterSpacing.tight,
   },
   headlineMedium: {
-    fontFamily,
+    fontFamily: appFontFamily.bold,
     fontSize: fontSize.xxl,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.bold,
     lineHeight: fontSize.xxl * lineHeight.snug,
     letterSpacing: letterSpacing.normal,
   },
   headlineSmall: {
-    fontFamily,
+    fontFamily: appFontFamily.semibold,
     fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
     lineHeight: fontSize.xl * lineHeight.snug,
     letterSpacing: letterSpacing.normal,
   },
   titleLarge: {
-    fontFamily,
+    fontFamily: appFontFamily.semibold,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     lineHeight: fontSize.lg * lineHeight.snug,
     letterSpacing: letterSpacing.normal,
   },
   titleMedium: {
-    fontFamily,
+    fontFamily: appFontFamily.semibold,
     fontSize: fontSize.base,
     fontWeight: fontWeight.semibold,
     lineHeight: fontSize.base * lineHeight.normal,
-    letterSpacing: letterSpacing.wide,
+    letterSpacing: letterSpacing.normal,
   },
   titleSmall: {
-    fontFamily,
+    fontFamily: appFontFamily.semibold,
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
     lineHeight: fontSize.md * lineHeight.normal,
-    letterSpacing: letterSpacing.wide,
+    letterSpacing: letterSpacing.normal,
   },
   bodyLarge: {
-    fontFamily,
+    fontFamily: appFontFamily.regular,
     fontSize: fontSize.base,
     fontWeight: fontWeight.regular,
     lineHeight: fontSize.base * lineHeight.relaxed,
     letterSpacing: letterSpacing.normal,
   },
   bodyMedium: {
-    fontFamily,
+    fontFamily: appFontFamily.regular,
     fontSize: fontSize.md,
     fontWeight: fontWeight.regular,
     lineHeight: fontSize.md * lineHeight.relaxed,
     letterSpacing: letterSpacing.normal,
   },
   bodySmall: {
-    fontFamily,
+    fontFamily: appFontFamily.regular,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.regular,
     lineHeight: fontSize.sm * lineHeight.relaxed,
     letterSpacing: letterSpacing.normal,
   },
   labelLarge: {
-    fontFamily,
+    fontFamily: appFontFamily.medium,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.medium,
     lineHeight: fontSize.md * lineHeight.normal,
-    letterSpacing: letterSpacing.wider,
+    letterSpacing: letterSpacing.wide,
   },
   labelMedium: {
-    fontFamily,
+    fontFamily: appFontFamily.medium,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.medium,
     lineHeight: fontSize.sm * lineHeight.normal,
-    letterSpacing: letterSpacing.wider,
+    letterSpacing: letterSpacing.wide,
   },
   labelSmall: {
-    fontFamily,
+    fontFamily: appFontFamily.medium,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.medium,
     lineHeight: fontSize.xs * lineHeight.normal,
-    letterSpacing: letterSpacing.widest,
+    letterSpacing: letterSpacing.wider,
   },
 } as const;
 

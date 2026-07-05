@@ -74,7 +74,7 @@ export function PrimaryButton({
       style={[
         fullWidth && styles.fullWidth,
         { transform: [{ scale }] },
-        !isDisabled && shadows.sm,
+        !isDisabled && shadows.xs,
         style,
       ]}
     >
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    borderRadius: 14,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -135,5 +135,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: '700',
     letterSpacing: 0.2,
+    fontFamily: 'PlusJakartaSans_600SemiBold',
   },
 });

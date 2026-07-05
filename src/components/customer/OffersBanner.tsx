@@ -1,0 +1,81 @@
+import { ImageBackground, Pressable, StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
+
+import { MOCK_IMAGES } from '@/constants/customer/images';
+import { useAppTheme } from '@/hooks';
+
+export type OffersBannerProps = {
+  title: string;
+  subtitle: string;
+  code?: string;
+  onPress?: () => void;
+};
+
+export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerProps) {
+  const theme = useAppTheme();
+  const { colors } = theme.tokens;
+
+  return (
+    <Pressable onPress={onPress} style={styles.wrap}>
+      <ImageBackground
+        source={{ uri: MOCK_IMAGES.offerBanner }}
+        style={styles.banner}
+        imageStyle={styles.bannerImage}
+      >
+        <View style={styles.overlay} />
+        <View style={styles.content}>
+          <Text variant="labelSmall" style={{ color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>
+            Limited offer
+          </Text>
+          <Text variant="titleMedium" style={{ color: colors.white, fontWeight: '600' }}>
+            {title}
+          </Text>
+          <Text variant="bodySmall" style={{ color: 'rgba(255,255,255,0.9)' }}>
+            {subtitle}
+          </Text>
+          {code ? (
+            <View style={styles.codePill}>
+              <Text variant="labelMedium" style={{ color: colors.white, fontWeight: '600' }}>
+                {code}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </ImageBackground>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrap: {
+    marginHorizontal: 20,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  banner: {
+    minHeight: 120,
+    justifyContent: 'flex-end',
+  },
+  bannerImage: {
+    borderRadius: 12,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(17, 24, 39, 0.55)',
+    borderRadius: 12,
+  },
+  content: {
+    padding: 16,
+    gap: 4,
+    zIndex: 1,
+  },
+  codePill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+  },
+});
