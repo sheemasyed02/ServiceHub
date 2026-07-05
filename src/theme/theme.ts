@@ -54,11 +54,11 @@ export const shadows = {
 /** MD3 surface tints for Paper elevation levels. */
 const elevationSurfaces = {
   level0: colors.surface,
-  level1: '#FDFCFA',
-  level2: '#FBFAF7',
-  level3: '#F9F8F4',
-  level4: '#F7F6F1',
-  level5: '#F5F4EE',
+  level1: colors.surface,
+  level2: colors.surfaceVariant,
+  level3: colors.surfaceVariant,
+  level4: colors.surfaceVariant,
+  level5: colors.surfaceVariant,
 };
 
 /** Button style presets — use with Paper Button or custom Pressable. */
@@ -157,12 +157,12 @@ export const cardStyles = {
     padding: layout.cardPadding,
   },
   featured: {
-    backgroundColor: colors.primaryContainer,
+    backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
     borderWidth: 1,
-    borderColor: colors.primaryLight,
-    ...shadows.sm,
+    borderColor: colors.border,
+    ...shadows.xs,
   },
   compact: {
     backgroundColor: colors.surface,

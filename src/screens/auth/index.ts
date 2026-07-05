@@ -1,6 +1,9 @@
 export { CustomerLoginScreen } from './CustomerLoginScreen';
+export { CustomerRegisterScreen } from './CustomerRegisterScreen';
 export { ForgotPasswordScreen } from './ForgotPasswordScreen';
 export { OTPScreen } from './OTPScreen';
 export { ProviderLoginScreen } from './ProviderLoginScreen';
-export { RegisterScreen } from './RegisterScreen';
+export { ProviderRegisterScreen } from './ProviderRegisterScreen';
+export { ResetPasswordScreen } from './ResetPasswordScreen';
+export { SplashScreen } from './SplashScreen';
 export { WelcomeScreen } from './WelcomeScreen';

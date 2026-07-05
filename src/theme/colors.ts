@@ -1,75 +1,79 @@
 /**
- * ServiceHub color palette — warm gold accent on a clean light surface.
+ * ServiceHub palette — gold accent on clean neutral surfaces.
  */
 export const colors = {
   // Brand
-  primary: '#CCAA27',
-  primaryDark: '#A88A1F',
-  primaryLight: '#E4C84E',
-  onPrimary: '#1A1600',
-  primaryContainer: '#FBF6E0',
-  onPrimaryContainer: '#3D3200',
+  primary: '#C4A020',
+  primaryDark: '#9A7B18',
+  primaryLight: '#D4B84A',
+  onPrimary: '#FFFFFF',
+  primaryContainer: '#F4F4F5',
+  onPrimaryContainer: '#1A1814',
 
-  secondary: '#EBA225',
-  secondaryDark: '#C8871A',
-  secondaryLight: '#F5C05A',
-  onSecondary: '#1A1200',
-  secondaryContainer: '#FDF2DC',
-  onSecondaryContainer: '#3D2800',
+  secondary: '#E09520',
+  secondaryDark: '#B87618',
+  secondaryLight: '#E8AB45',
+  onSecondary: '#FFFFFF',
+  secondaryContainer: '#F4F4F5',
+  onSecondaryContainer: '#1A1814',
 
   // Surfaces
-  background: '#F9F8F5',
-  onBackground: '#1A1814',
+  background: '#FFFFFF',
+  onBackground: '#18181B',
   surface: '#FFFFFF',
-  onSurface: '#1A1814',
-  surfaceVariant: '#F2F0EA',
-  onSurfaceVariant: '#5C574F',
+  onSurface: '#18181B',
+  surfaceVariant: '#F4F4F5',
+  onSurfaceVariant: '#52525B',
   surfaceElevated: '#FFFFFF',
-  surfaceDisabled: 'rgba(26, 24, 20, 0.08)',
-  onSurfaceDisabled: 'rgba(26, 24, 20, 0.38)',
+  surfaceDisabled: 'rgba(24, 24, 27, 0.06)',
+  onSurfaceDisabled: 'rgba(24, 24, 27, 0.38)',
+
+  // Input
+  inputBackground: '#FFFFFF',
+  inputBorder: '#E4E4E7',
+  inputBorderFocus: '#C4A020',
+  placeholder: '#71717A',
 
   // Semantic
-  error: '#C62828',
+  error: '#DC2626',
   onError: '#FFFFFF',
-  errorContainer: '#FFEBEE',
-  onErrorContainer: '#5F1212',
+  errorContainer: '#FEF2F2',
+  onErrorContainer: '#991B1B',
 
-  success: '#2E7D32',
+  success: '#16A34A',
   onSuccess: '#FFFFFF',
-  successContainer: '#E8F5E9',
-  onSuccessContainer: '#1B5E20',
+  successContainer: '#F0FDF4',
+  onSuccessContainer: '#166534',
 
-  warning: '#ED6C02',
+  warning: '#EA580C',
   onWarning: '#FFFFFF',
-  warningContainer: '#FFF3E0',
-  onWarningContainer: '#7C3A00',
+  warningContainer: '#FFF7ED',
+  onWarningContainer: '#9A3412',
 
   // Borders & dividers
-  border: '#E5E1D6',
-  borderLight: '#F0EDE6',
-  outline: '#C9C4B8',
-  outlineVariant: '#E8E4DB',
-  divider: '#EBE8E0',
+  border: '#E4E4E7',
+  borderLight: '#F0F0F2',
+  outline: '#D4D4D8',
+  outlineVariant: '#E4E4E7',
+  divider: '#F0F0F2',
 
   // Text hierarchy
-  textPrimary: '#1A1814',
-  textSecondary: '#5C574F',
-  textTertiary: '#8A8478',
+  textPrimary: '#18181B',
+  textSecondary: '#52525B',
+  textTertiary: '#A1A1AA',
   textInverse: '#FFFFFF',
-  textLink: '#A88A1F',
+  textLink: '#9A7B18',
 
   // Utility
-  backdrop: 'rgba(26, 24, 20, 0.52)',
-  shadow: '#1A1814',
-  overlay: 'rgba(26, 24, 20, 0.06)',
-  scrim: 'rgba(26, 24, 20, 0.32)',
+  backdrop: 'rgba(24, 24, 27, 0.5)',
+  shadow: '#18181B',
+  overlay: 'rgba(24, 24, 27, 0.04)',
+  scrim: 'rgba(24, 24, 27, 0.32)',
 
-  // Inverse (snackbars, tooltips)
-  inverseSurface: '#2C2924',
-  inverseOnSurface: '#F5F3EE',
-  inversePrimary: '#E4C84E',
+  inverseSurface: '#27272A',
+  inverseOnSurface: '#FAFAFA',
+  inversePrimary: '#D4B84A',
 
-  // Pure
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
