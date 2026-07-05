@@ -1,2 +1,6 @@
 export { RootNavigator } from './RootNavigator';
-export type { RootStackParamList } from './types';
+export { AuthStack, MainStack } from './stacks';
+export { MainTabs } from './tabs';
+export * from './types';
+export * from './utils';
+export * from './config';

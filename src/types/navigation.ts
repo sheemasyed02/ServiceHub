@@ -1,3 +1,6 @@
-export type RootStackParamList = {
-  Home: undefined;
-};
+export type {
+  AuthStackParamList,
+  MainStackParamList,
+  MainTabParamList,
+  RootStackParamList,
+} from '@/navigation/types';

@@ -1,1 +1,3 @@
-export { HomeScreen } from './HomeScreen';
+export * from './auth';
+export * from './main';
+export * from './tabs';
