@@ -5,7 +5,6 @@ import { useAppTheme } from '@/hooks';
 
 export type SectionHeaderProps = {
   title: string;
-  subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
   inset?: boolean;
@@ -14,7 +13,6 @@ export type SectionHeaderProps = {
 
 export function SectionHeader({
   title,
-  subtitle,
   actionLabel,
   onAction,
   inset = false,
@@ -25,23 +23,12 @@ export function SectionHeader({
 
   return (
     <View style={[styles.row, inset && styles.inset, style]}>
-      <View style={styles.titleWrap}>
-        <Text variant="titleMedium" style={{ color: colors.textPrimary, fontWeight: '800' }}>
-          {title}
-        </Text>
-        {subtitle ? (
-          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 3 }}>
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
+      <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '600', flex: 1 }}>
+        {title}
+      </Text>
       {actionLabel && onAction ? (
-        <Pressable
-          onPress={onAction}
-          hitSlop={8}
-          style={[styles.actionBtn, { backgroundColor: colors.primaryContainer }]}
-        >
-          <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '700' }}>
+        <Pressable onPress={onAction} hitSlop={8}>
+          <Text variant="labelLarge" style={{ color: colors.primaryDark, fontWeight: '600' }}>
             {actionLabel}
           </Text>
         </Pressable>
@@ -55,21 +42,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 14,
+    paddingHorizontal: 20,
+    marginBottom: 8,
+    marginTop: 20,
     gap: 12,
   },
   inset: {
-    paddingHorizontal: 0,
-    marginBottom: 12,
-  },
-  titleWrap: {
-    flex: 1,
-    gap: 0,
-  },
-  actionBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingHorizontal: 4,
+    marginTop: 0,
   },
 });

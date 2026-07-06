@@ -19,7 +19,7 @@ type LayoutMode = 'list' | 'compact';
 
 export function ProviderListingScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
-  const { colors, gradients, shadows } = theme.tokens;
+  const { colors, gradients } = theme.tokens;
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortKey>('rating');
   const [sortId, setSortId] = useState('rating');
@@ -64,43 +64,37 @@ export function ProviderListingScreen({ navigation, route }: Props) {
   const header = (
     <LinearGradient colors={gradients.hero} style={styles.hero}>
       <View style={styles.heroTop}>
-        <Pressable
-          onPress={() => navigation.goBack()}
-          hitSlop={12}
-          style={[styles.backBtn, { backgroundColor: colors.surface, ...shadows.sm }]}
-        >
-          <MaterialCommunityIcons name="arrow-left" size={22} color={colors.textPrimary} />
+        <Pressable onPress={() => navigation.goBack()} hitSlop={12} style={styles.backBtn}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.heroText}>
-          <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '800' }}>
+          <Text variant="titleLarge" style={{ color: colors.textPrimary, fontWeight: '700' }}>
             {screenTitle}
           </Text>
           <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 2 }}>
-            {providers.length} provider{providers.length === 1 ? '' : 's'} available
+            {providers.length} provider{providers.length === 1 ? '' : 's'}
           </Text>
         </View>
       </View>
 
-      <View style={[styles.controlsCard, { backgroundColor: colors.surface, ...shadows.md }]}>
-        <SearchBar
-          placeholder={`Search ${categoryTitle?.toLowerCase() ?? 'providers'}...`}
-          value={query}
-          onChangeText={setQuery}
-          dense
+      <SearchBar
+        placeholder={`Search ${categoryTitle?.toLowerCase() ?? 'providers'}...`}
+        value={query}
+        onChangeText={setQuery}
+        dense
+      />
+      <View style={styles.filterRow}>
+        <FilterChip label="Filter" icon="tune-variant" onPress={() => setFilterOpen(true)} />
+        <FilterChip
+          label={SORT_OPTIONS.find((o) => o.id === sortId)?.label ?? 'Sort'}
+          icon="sort"
+          onPress={() => setSortOpen(true)}
         />
-        <View style={styles.filterRow}>
-          <FilterChip label="Filter" icon="tune-variant" onPress={() => setFilterOpen(true)} />
-          <FilterChip
-            label={SORT_OPTIONS.find((o) => o.id === sortId)?.label ?? 'Sort'}
-            icon="sort"
-            onPress={() => setSortOpen(true)}
-          />
-          <FilterChip
-            label={layout === 'list' ? 'Grid' : 'List'}
-            icon={layout === 'list' ? 'view-grid-outline' : 'view-list-outline'}
-            onPress={() => setLayout(layout === 'list' ? 'compact' : 'list')}
-          />
-        </View>
+        <FilterChip
+          label={layout === 'list' ? 'Grid' : 'List'}
+          icon={layout === 'list' ? 'view-grid-outline' : 'view-list-outline'}
+          onPress={() => setLayout(layout === 'list' ? 'compact' : 'list')}
+        />
       </View>
     </LinearGradient>
   );
@@ -116,6 +110,8 @@ export function ProviderListingScreen({ navigation, route }: Props) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={[
           styles.list,
+          layout === 'list' && providers.length > 0 && styles.listGrouped,
+          layout === 'list' && providers.length > 0 && { backgroundColor: colors.surface },
           providers.length === 0 && styles.listEmpty,
         ]}
         columnWrapperStyle={layout === 'compact' ? styles.gridRow : undefined}
@@ -138,11 +134,12 @@ export function ProviderListingScreen({ navigation, route }: Props) {
             }
           />
         }
-        renderItem={({ item }) => (
-          <View style={layout === 'compact' ? styles.gridItem : styles.listItem}>
+        renderItem={({ item, index }) => (
+          <View style={layout === 'compact' ? styles.gridItem : undefined}>
             <ProviderCard
               provider={item}
               layout={layout}
+              showDivider={layout === 'list' && index < providers.length - 1}
               onPress={() => navigation.navigate('ProviderProfile', { providerId: item.id })}
               onBook={() => navigation.navigate('Booking', { providerId: item.id })}
             />
@@ -204,10 +201,10 @@ function FilterChip({
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}
+      style={[styles.chip, { backgroundColor: colors.surface }]}
     >
-      <MaterialCommunityIcons name={icon} size={15} color={colors.primaryDark} />
-      <Text variant="labelSmall" style={{ color: colors.textPrimary, fontWeight: '700' }} numberOfLines={1}>
+      <MaterialCommunityIcons name={icon} size={16} color={colors.textSecondary} />
+      <Text variant="labelMedium" style={{ color: colors.textPrimary }} numberOfLines={1}>
         {label}
       </Text>
     </Pressable>
@@ -221,28 +218,23 @@ const styles = StyleSheet.create({
   hero: {
     paddingHorizontal: 16,
     paddingTop: 4,
-    paddingBottom: 16,
-    gap: 14,
+    paddingBottom: 14,
+    gap: 12,
   },
   heroTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   heroText: {
     flex: 1,
   },
   backBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  controlsCard: {
-    borderRadius: 18,
-    padding: 12,
-    gap: 10,
+    marginLeft: -8,
   },
   filterRow: {
     flexDirection: 'row',
@@ -254,12 +246,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 11,
-    borderRadius: 12,
-    borderWidth: 1,
-    minHeight: 44,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    minHeight: 40,
   },
   listFlex: {
     flex: 1,
@@ -270,10 +261,14 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     gap: 10,
   },
+  listGrouped: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    gap: 0,
+  },
   listEmpty: {
     flexGrow: 1,
   },
-  listItem: { marginBottom: 12 },
   gridRow: { gap: 10, paddingHorizontal: 0 },
   gridItem: { flex: 1, marginBottom: 10 },
 });

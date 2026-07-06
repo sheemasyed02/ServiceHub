@@ -1,3 +1,10 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
+
+export type ChatStackParamList = {
+  ChatList: undefined;
+  ChatConversation: { threadId: string };
+};
+
 export type HomeStackParamList = {
   HomeMain: undefined;
   Search: undefined;
@@ -5,6 +12,7 @@ export type HomeStackParamList = {
   ProviderProfile: { providerId: string };
   Booking: { providerId: string; serviceId?: string };
   BookingConfirmation: { bookingId: string };
+  ProfileFlow: NavigatorScreenParams<ProfileStackParamList> | undefined;
 };
 
 export type BookingsStackParamList = {

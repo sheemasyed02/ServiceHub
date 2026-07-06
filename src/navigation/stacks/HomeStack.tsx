@@ -9,6 +9,7 @@ import {
   ProviderProfileScreen,
   SearchScreen,
 } from '@/screens/customer';
+import { ProfileStack } from '@/navigation/stacks/ProfileStack';
 import type { HomeStackParamList } from '@/navigation/types/customer.types';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -32,6 +33,11 @@ export function HomeStack() {
       <Stack.Screen
         name="BookingConfirmation"
         component={BookingConfirmationScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProfileFlow"
+        component={ProfileStack}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

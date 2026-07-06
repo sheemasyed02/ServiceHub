@@ -10,24 +10,41 @@ export type ProfileMenuItemProps = {
   value?: string;
   danger?: boolean;
   onPress: () => void;
+  showDivider?: boolean;
 };
 
-export function ProfileMenuItem({ icon, label, value, danger, onPress }: ProfileMenuItemProps) {
+export function ProfileMenuItem({
+  icon,
+  label,
+  value,
+  danger,
+  onPress,
+  showDivider = false,
+}: ProfileMenuItemProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.row, pressed && { opacity: 0.7 }]}>
-      <View style={[styles.iconWrap, { backgroundColor: colors.primaryContainer }]}>
-        <MaterialCommunityIcons
-          name={icon}
-          size={20}
-          color={danger ? colors.error : colors.primaryDark}
-        />
-      </View>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.row,
+        pressed && { opacity: 0.65 },
+        showDivider && {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.divider,
+        },
+      ]}
+    >
+      <MaterialCommunityIcons
+        name={icon}
+        size={22}
+        color={danger ? colors.error : colors.textSecondary}
+        style={styles.icon}
+      />
       <Text
         variant="bodyLarge"
-        style={{ flex: 1, color: danger ? colors.error : colors.textPrimary, fontWeight: '500' }}
+        style={{ flex: 1, color: danger ? colors.error : colors.textPrimary }}
       >
         {label}
       </Text>
@@ -45,15 +62,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    gap: 12,
+    paddingVertical: 13,
+    paddingHorizontal: 16,
+    minHeight: 48,
   },
-  iconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
+  icon: {
+    width: 24,
+    textAlign: 'center',
   },
 });

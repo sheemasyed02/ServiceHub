@@ -3,6 +3,7 @@ export { BookingsStack } from './BookingsStack';
 export { HomeStack } from './HomeStack';
 export { MainStack } from './MainStack';
 export { ProfileStack } from './ProfileStack';
+export { ChatStack } from './ChatStack';
 export { ProviderDashboardStack } from './ProviderDashboardStack';
 export { ProviderJobsStack } from './ProviderJobsStack';
 export { ProviderCalendarStack } from './ProviderCalendarStack';

@@ -16,7 +16,7 @@ const TAB_CONFIG: Record<
   Home: { label: 'Home', icon: 'home-outline', iconFocused: 'home' },
   Bookings: { label: 'Bookings', icon: 'calendar-check-outline', iconFocused: 'calendar-check' },
   Notifications: { label: 'Alerts', icon: 'bell-outline', iconFocused: 'bell' },
-  Profile: { label: 'Profile', icon: 'account-outline', iconFocused: 'account' },
+  Chat: { label: 'Chat', icon: 'message-text-outline', iconFocused: 'message-text' },
 };
 
 export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
@@ -29,9 +29,9 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
       style={[
         styles.bar,
         {
-          backgroundColor: colors.surfaceElevated,
-          borderTopColor: colors.border,
-          paddingBottom: Math.max(insets.bottom, 10),
+          backgroundColor: colors.surface,
+          borderTopColor: colors.divider,
+          paddingBottom: Math.max(insets.bottom, 8),
         },
       ]}
     >
@@ -54,27 +54,22 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
               }
             }}
           >
-            <View style={[styles.iconPill, focused && { backgroundColor: colors.primaryContainer }]}>
-              <MaterialCommunityIcons
-                name={focused ? config.iconFocused : config.icon}
-                size={22}
-                color={focused ? colors.primaryDark : colors.textTertiary}
-              />
-            </View>
+            <MaterialCommunityIcons
+              name={focused ? config.iconFocused : config.icon}
+              size={24}
+              color={focused ? colors.primaryDark : colors.textTertiary}
+            />
             <Text
               variant="labelSmall"
               style={{
                 color: focused ? colors.primaryDark : colors.textTertiary,
                 fontWeight: focused ? '600' : '400',
                 fontSize: 11,
-                marginTop: 4,
+                marginTop: 2,
               }}
             >
               {config.label}
             </Text>
-            {focused ? (
-              <View style={[styles.indicator, { backgroundColor: colors.primary }]} />
-            ) : null}
           </Pressable>
         );
       })}
@@ -85,37 +80,22 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
-    borderTopWidth: 1,
-    paddingTop: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 8,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.06,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
       },
-      android: { elevation: 12 },
+      android: { elevation: 4 },
     }),
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 2,
-    position: 'relative',
-  },
-  iconPill: {
-    width: 44,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  indicator: {
-    position: 'absolute',
-    top: 0,
-    width: 20,
-    height: 3,
-    borderRadius: 999,
+    paddingVertical: 4,
   },
 });

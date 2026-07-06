@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import { authReducer } from './authSlice';
 import { bookingsReducer } from './bookingsSlice';
+import { chatsReducer } from './chatsSlice';
 import { customerReducer } from './customerSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     bookings: bookingsReducer,
+    chats: chatsReducer,
     customer: customerReducer,
   },
 });
@@ -28,4 +30,4 @@ export {
   completeBooking,
   cancelBooking,
 } from './bookingsSlice';
-export type { CreateBookingPayload } from './bookingsSlice';
+export { sendMessage, markThreadRead } from './chatsSlice';

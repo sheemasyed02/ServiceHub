@@ -5,6 +5,9 @@ export type CustomerUser = {
   phone: string;
   email: string;
   location: string;
+  locationFull?: string;
+  locationSource?: 'gps' | 'saved';
+  coords?: { latitude: number; longitude: number };
 };
 
 type CustomerState = {

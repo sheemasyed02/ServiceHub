@@ -38,6 +38,13 @@
     "plugins": [
       "expo-font",
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow ServiceHub to use your location to show nearby services.",
+          "locationWhenInUsePermission": "Allow ServiceHub to use your location to show nearby services."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "Allow ServiceHub to access your photos for document uploads.",

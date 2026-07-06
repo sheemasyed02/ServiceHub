@@ -1,6 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRef } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { AppImage, Avatar, RatingStars } from '@/components/ui';
@@ -13,35 +12,29 @@ export type ProviderCardProps = {
   layout?: 'list' | 'compact';
   onPress: () => void;
   onBook?: () => void;
+  /** Hairline between rows inside an InsetGroup. */
+  showDivider?: boolean;
 };
 
-export function ProviderCard({ provider, layout = 'list', onPress, onBook }: ProviderCardProps) {
+export function ProviderCard({
+  provider,
+  layout = 'list',
+  onPress,
+  onBook,
+  showDivider = false,
+}: ProviderCardProps) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
   const images = getProviderImages(provider.id);
   const avatarSource = images?.avatar ? { uri: images.avatar } : undefined;
-  const scale = useRef(new Animated.Value(1)).current;
-
-  const pressIn = () => {
-    Animated.spring(scale, { toValue: 0.98, useNativeDriver: true, friction: 8 }).start();
-  };
-  const pressOut = () => {
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, friction: 8 }).start();
-  };
 
   if (layout === 'compact') {
     return (
-      <Pressable onPress={onPress} onPressIn={pressIn} onPressOut={pressOut}>
-        <Animated.View
-          style={[
-            styles.compact,
-            { transform: [{ scale }], backgroundColor: colors.surfaceElevated },
-            shadows.md,
-          ]}
-        >
+      <Pressable onPress={onPress} style={styles.compactWrap}>
+        <View style={[styles.compact, { backgroundColor: colors.surface }, shadows.sm]}>
           <AppImage
             uri={images?.cover ?? images?.avatar ?? MOCK_FALLBACK}
-            aspectRatio={1.2}
+            aspectRatio={1.15}
             radius={0}
             style={styles.compactImage}
           />
@@ -58,67 +51,55 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
                 {provider.rating}
               </Text>
             </View>
-            <Text variant="labelLarge" style={{ color: colors.primaryDark, marginTop: 6 }}>
+            <Text variant="labelMedium" style={{ color: colors.textPrimary, marginTop: 4 }}>
               ₹{provider.priceFrom}
             </Text>
           </View>
-        </Animated.View>
+        </View>
       </Pressable>
     );
   }
 
   return (
-    <Pressable onPress={onPress} onPressIn={pressIn} onPressOut={pressOut}>
-      <Animated.View
-        style={[
-          styles.card,
-          { transform: [{ scale }], backgroundColor: colors.surfaceElevated },
-          shadows.md,
-        ]}
-      >
-        <Avatar source={avatarSource} name={provider.name} size="lg" />
-        <View style={styles.body}>
-          <View style={styles.titleRow}>
-            <Text
-              variant="titleSmall"
-              numberOfLines={1}
-              style={{ color: colors.textPrimary, flex: 1 }}
-            >
-              {provider.name}
-            </Text>
-            {provider.verified ? (
-              <MaterialCommunityIcons name="check-decagram" size={16} color={colors.primary} />
-            ) : null}
-          </View>
-          <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
-            {provider.profession} · {provider.experience}
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.row,
+        showDivider && {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.divider,
+        },
+      ]}
+    >
+      <Avatar source={avatarSource} name={provider.name} size="md" />
+      <View style={styles.body}>
+        <View style={styles.titleRow}>
+          <Text variant="bodyLarge" numberOfLines={1} style={{ color: colors.textPrimary, flex: 1 }}>
+            {provider.name}
           </Text>
-          <View style={styles.meta}>
-            <RatingStars rating={provider.rating} size={12} readonly />
-            <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
-              {provider.rating} · {provider.distance}
-            </Text>
-          </View>
-          <View style={styles.footer}>
-            <Text variant="labelLarge" style={{ color: colors.textPrimary }}>
-              ₹{provider.priceFrom}
-              <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
-                {' '}
-                onwards
-              </Text>
-            </Text>
-            <Pressable
-              onPress={onBook ?? onPress}
-              hitSlop={8}
-              style={[styles.bookBtn, { backgroundColor: colors.primary }]}
-            >
-              <Text variant="labelMedium" style={{ color: colors.onPrimary, fontWeight: '600' }}>
-                Book
-              </Text>
-            </Pressable>
-          </View>
+          {provider.verified ? (
+            <MaterialCommunityIcons name="check-decagram" size={15} color={colors.primary} />
+          ) : null}
         </View>
-      </Animated.View>
+        <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
+          {provider.profession} · {provider.distance}
+        </Text>
+        <View style={styles.meta}>
+          <RatingStars rating={provider.rating} size={11} readonly />
+          <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
+            {provider.rating}
+          </Text>
+          <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
+            ·
+          </Text>
+          <Text variant="labelSmall" style={{ color: colors.textPrimary }}>
+            ₹{provider.priceFrom}+
+          </Text>
+        </View>
+      </View>
+      <Pressable onPress={onBook ?? onPress} hitSlop={12} style={styles.chevron}>
+        <MaterialCommunityIcons name="chevron-right" size={22} color={colors.textTertiary} />
+      </Pressable>
     </Pressable>
   );
 }
@@ -126,32 +107,23 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
 const MOCK_FALLBACK = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&q=80';
 
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    gap: 14,
-    padding: 14,
-    borderRadius: 18,
-  },
-  body: { flex: 1, gap: 4 },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
-  footer: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  bookBtn: {
+    gap: 12,
     paddingHorizontal: 16,
-    paddingVertical: 9,
-    borderRadius: 12,
+    paddingVertical: 12,
   },
+  body: { flex: 1, gap: 2 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  chevron: { paddingLeft: 4 },
+  compactWrap: { width: 152 },
   compact: {
-    width: 168,
-    borderRadius: 18,
+    borderRadius: 12,
     overflow: 'hidden',
   },
   compactImage: { width: '100%' },
-  compactBody: { padding: 12, gap: 2 },
-  compactMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  compactBody: { padding: 10, gap: 1 },
+  compactMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
 });

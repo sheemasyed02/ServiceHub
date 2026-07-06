@@ -7,6 +7,8 @@ export { BookingConfirmationScreen } from './booking/BookingConfirmationScreen';
 export { MyBookingsScreen } from './bookings/MyBookingsScreen';
 export { BookingDetailsScreen } from './bookings/BookingDetailsScreen';
 export { LiveTrackingScreen } from './bookings/LiveTrackingScreen';
+export { ChatListScreen } from './chat/ChatListScreen';
+export { ChatConversationScreen } from './chat/ChatConversationScreen';
 export { NotificationsScreen } from './notifications/NotificationsScreen';
 export { ProfileScreen } from './profile/ProfileScreen';
 export { EditProfileScreen } from './profile/EditProfileScreen';

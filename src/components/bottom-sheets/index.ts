@@ -6,6 +6,7 @@ export { SortSheet } from './SortSheet';
 export { SelectDateSheet } from './SelectDateSheet';
 export { SelectTimeSheet } from './SelectTimeSheet';
 export { ChooseAddressSheet } from './ChooseAddressSheet';
+export { LocationPickerSheet } from './LocationPickerSheet';
 export { ApplyCouponSheet } from './ApplyCouponSheet';
 
 export type {

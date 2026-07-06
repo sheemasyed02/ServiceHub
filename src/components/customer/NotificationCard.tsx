@@ -11,6 +11,7 @@ export type NotificationCardProps = {
   read: boolean;
   onPress?: () => void;
   onDelete?: () => void;
+  showDivider?: boolean;
 };
 
 export function NotificationCard({
@@ -20,6 +21,7 @@ export function NotificationCard({
   read,
   onPress,
   onDelete,
+  showDivider = false,
 }: NotificationCardProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
@@ -28,20 +30,19 @@ export function NotificationCard({
     <Pressable
       onPress={onPress}
       style={[
-        styles.card,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          opacity: read ? 0.85 : 1,
+        styles.row,
+        showDivider && {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.divider,
         },
+        !read && { backgroundColor: colors.primaryContainer + '40' },
       ]}
     >
-      {!read ? <View style={[styles.dot, { backgroundColor: colors.primary }]} /> : null}
       <View style={styles.content}>
         <View style={styles.header}>
           <Text
             variant="bodyLarge"
-            style={{ fontWeight: '600', color: colors.textPrimary, flex: 1 }}
+            style={{ fontWeight: read ? '400' : '600', color: colors.textPrimary, flex: 1 }}
           >
             {title}
           </Text>
@@ -63,20 +64,12 @@ export function NotificationCard({
 }
 
 const styles = StyleSheet.create({
-  card: {
+  row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    padding: 14,
-    marginHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   content: {
     flex: 1,

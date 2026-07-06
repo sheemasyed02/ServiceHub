@@ -1,10 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-import { CustomerScreen, ProfileMenuItem } from '@/components/customer';
+import { CustomerScreen, InsetGroup, ProfileMenuItem } from '@/components/customer';
 import { Avatar, SecondaryButton } from '@/components/ui';
 import { MOCK_IMAGES } from '@/constants/customer/images';
 import { useAppTheme, useCustomerUser } from '@/hooks';
@@ -16,99 +15,64 @@ import { clearAuth } from '@/services/appStorage';
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
 
+const MENU_ITEMS = [
+  { icon: 'account-edit-outline' as const, label: 'Edit Profile', route: 'EditProfile' as const },
+  { icon: 'map-marker-outline' as const, label: 'Saved Addresses', route: 'EditProfile' as const },
+  { icon: 'credit-card-outline' as const, label: 'Payment Methods', route: null },
+  { icon: 'star-outline' as const, label: 'My Reviews', route: 'Reviews' as const },
+  { icon: 'cog-outline' as const, label: 'Settings', route: 'Settings' as const },
+  { icon: 'help-circle-outline' as const, label: 'Help & Support', route: 'HelpSupport' as const },
+];
+
 export function ProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors, gradients, shadows } = theme.tokens;
+  const { colors } = theme.tokens;
   const dispatch = useAppDispatch();
   const user = useCustomerUser();
 
   const header = (
-    <LinearGradient
-      colors={gradients.hero}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.hero}
-    >
-      <View style={[styles.profileCard, { backgroundColor: colors.surfaceElevated, ...shadows.md }]}>
-        <Avatar source={{ uri: MOCK_IMAGES.userAvatar }} name={user.name} size="xl" />
-        <View style={styles.profileInfo}>
-          <Text variant="titleLarge" style={{ fontWeight: '700', color: colors.textPrimary }}>
-            {user.name}
+    <View style={styles.hero}>
+      <Avatar source={{ uri: MOCK_IMAGES.userAvatar }} name={user.name} size="lg" />
+      <View style={styles.profileInfo}>
+        <Text variant="titleLarge" style={{ fontWeight: '600', color: colors.textPrimary }}>
+          {user.name}
+        </Text>
+        <Text variant="bodyMedium" style={{ color: colors.textSecondary }}>
+          {user.phone}
+        </Text>
+        <Text variant="bodySmall" style={{ color: colors.textTertiary }}>
+          {user.email}
+        </Text>
+        <View style={styles.metaRow}>
+          <MaterialCommunityIcons name="map-marker-outline" size={14} color={colors.textTertiary} />
+          <Text variant="bodySmall" style={{ color: colors.textSecondary }} numberOfLines={1}>
+            {user.location}
           </Text>
-          <View style={styles.metaRow}>
-            <MaterialCommunityIcons name="phone-outline" size={14} color={colors.textSecondary} />
-            <Text variant="bodyMedium" style={{ color: colors.textSecondary }}>
-              {user.phone}
-            </Text>
-          </View>
-          <View style={styles.metaRow}>
-            <MaterialCommunityIcons name="email-outline" size={14} color={colors.textTertiary} />
-            <Text variant="bodySmall" style={{ color: colors.textTertiary }}>
-              {user.email}
-            </Text>
-          </View>
-          <View style={styles.metaRow}>
-            <MaterialCommunityIcons name="map-marker-outline" size={14} color={colors.primaryDark} />
-            <Text variant="bodySmall" style={{ color: colors.textSecondary }} numberOfLines={1}>
-              {user.location}
-            </Text>
-          </View>
         </View>
-        <Pressable
-          onPress={() => navigation.navigate('EditProfile')}
-          style={[
-            styles.editBtn,
-            { backgroundColor: colors.primary, ...shadows.sm },
-          ]}
-        >
-          <MaterialCommunityIcons name="pencil-outline" size={16} color={colors.onPrimary} />
-          <Text variant="labelMedium" style={{ color: colors.onPrimary, fontWeight: '600' }}>
-            Edit
-          </Text>
-        </Pressable>
       </View>
-    </LinearGradient>
+      <Pressable onPress={() => navigation.navigate('EditProfile')} hitSlop={8}>
+        <Text variant="labelLarge" style={{ color: colors.primaryDark, fontWeight: '600' }}>
+          Edit
+        </Text>
+      </Pressable>
+    </View>
   );
 
   return (
     <CustomerScreen fixedHeader={header} contentStyle={styles.body}>
-      <View style={[styles.menu, { backgroundColor: colors.surfaceElevated, borderColor: colors.border, ...shadows.sm }]}>
-        <ProfileMenuItem
-          icon="account-edit-outline"
-          label="Edit Profile"
-          onPress={() => navigation.navigate('EditProfile')}
-        />
-        <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
-        <ProfileMenuItem
-          icon="map-marker-outline"
-          label="Saved Addresses"
-          onPress={() => navigation.navigate('EditProfile')}
-        />
-        <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
-        <ProfileMenuItem
-          icon="credit-card-outline"
-          label="Payment Methods"
-          onPress={() => undefined}
-        />
-        <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
-        <ProfileMenuItem
-          icon="star-outline"
-          label="My Reviews"
-          onPress={() => navigation.navigate('Reviews')}
-        />
-        <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
-        <ProfileMenuItem
-          icon="cog-outline"
-          label="Settings"
-          onPress={() => navigation.navigate('Settings')}
-        />
-        <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
-        <ProfileMenuItem
-          icon="help-circle-outline"
-          label="Help & Support"
-          onPress={() => navigation.navigate('HelpSupport')}
-        />
-      </View>
+      <InsetGroup style={styles.menu}>
+        {MENU_ITEMS.map((item, index) => (
+          <ProfileMenuItem
+            key={item.label}
+            icon={item.icon}
+            label={item.label}
+            showDivider={index < MENU_ITEMS.length - 1}
+            onPress={() => {
+              if (item.route) navigation.navigate(item.route);
+            }}
+          />
+        ))}
+      </InsetGroup>
 
       <View style={styles.logoutWrap}>
         <SecondaryButton
@@ -117,11 +81,15 @@ export function ProfileScreen({ navigation }: Props) {
           onPress={() =>
             Alert.alert('Logout', 'Are you sure you want to logout?', [
               { text: 'Cancel', style: 'cancel' },
-              { text: 'Logout', style: 'destructive', onPress: () => {
+              {
+                text: 'Logout',
+                style: 'destructive',
+                onPress: () => {
                   dispatch(logout());
                   clearAuth();
                   navigateToAuth(navigation);
-                }},
+                },
+              },
             ])
           }
         />
@@ -132,40 +100,21 @@ export function ProfileScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   hero: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 16,
+    paddingBottom: 20,
   },
-  profileCard: {
-    borderRadius: 20,
-    padding: 20,
-    gap: 14,
-  },
-  profileInfo: { gap: 6 },
+  profileInfo: { flex: 1, gap: 2 },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
+    marginTop: 4,
   },
-  editBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  body: { paddingTop: 4 },
-  menu: {
-    marginHorizontal: 20,
-    borderRadius: 18,
-    borderWidth: 1,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  divider: {
-    height: 1,
-    marginLeft: 74,
-  },
+  body: { paddingTop: 0 },
+  menu: { marginTop: 4, marginBottom: 20 },
   logoutWrap: { paddingHorizontal: 20 },
 });

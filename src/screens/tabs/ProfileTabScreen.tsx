@@ -10,7 +10,7 @@ import { navigateToAuth } from '@/navigation/utils';
 import type { MainStackParamList, MainTabParamList } from '@/navigation/types';
 
 type Props = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'Profile'>,
+  BottomTabScreenProps<MainTabParamList, 'Chat'>,
   NativeStackScreenProps<MainStackParamList>
 >;
 

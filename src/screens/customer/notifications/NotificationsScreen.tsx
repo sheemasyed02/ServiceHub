@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-import { CustomerScreen, NotificationCard, SectionHeader } from '@/components/customer';
+import { CustomerScreen, InsetGroup, NotificationCard, SectionHeader } from '@/components/customer';
 import { EmptyState } from '@/components/ui';
 import { MOCK_NOTIFICATIONS } from '@/constants/customer';
 import { useAppTheme } from '@/hooks';
@@ -70,20 +70,21 @@ export function NotificationsScreen() {
 
         return (
           <View key={key} style={styles.section}>
-            <SectionHeader title={title} />
-            <View style={{ gap: 10 }}>
-              {items.map((n) => (
+            <SectionHeader title={title} style={styles.sectionHeader} />
+            <InsetGroup>
+              {items.map((n, index) => (
                 <NotificationCard
                   key={n.id}
                   title={n.title}
                   message={n.message}
                   time={n.time}
                   read={n.read}
+                  showDivider={index < items.length - 1}
                   onPress={() => markRead(n.id)}
                   onDelete={() => deleteNotification(n.id)}
                 />
               ))}
-            </View>
+            </InsetGroup>
           </View>
         );
       })}
@@ -93,6 +94,9 @@ export function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 20,
+    marginBottom: 12,
+  },
+  sectionHeader: {
+    marginTop: 8,
   },
 });

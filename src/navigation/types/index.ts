@@ -16,6 +16,7 @@ export type {
 } from './customer.types';
 export type { MainStackParamList } from './main.types';
 export type { MainTabParamList } from './tabs.types';
+export type { ChatStackParamList } from './customer.types';
 export type {
   ProviderTabParamList,
   ProviderDashboardStackParamList,

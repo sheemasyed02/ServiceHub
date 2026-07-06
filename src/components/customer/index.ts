@@ -4,6 +4,9 @@ export type { FaqAccordionProps } from './FaqAccordion';
 export { ReviewCard } from './ReviewCard';
 export type { ReviewCardProps } from './ReviewCard';
 
+export { ChatThreadRow } from './ChatThreadRow';
+export type { ChatThreadRowProps } from './ChatThreadRow';
+
 export { BookingCard } from './BookingCard';
 export type { BookingCardProps } from './BookingCard';
 
@@ -31,6 +34,9 @@ export type { ProviderCardProps } from './ProviderCard';
 
 export { SearchResultItem } from './SearchResultItem';
 export type { SearchResultItemProps } from './SearchResultItem';
+
+export { InsetGroup } from './InsetGroup';
+export type { InsetGroupProps } from './InsetGroup';
 
 export { SectionHeader } from './SectionHeader';
 export type { SectionHeaderProps } from './SectionHeader';

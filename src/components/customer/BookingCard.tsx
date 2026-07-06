@@ -2,111 +2,125 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-import { SecondaryButton } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
 import type { Booking, BookingStatus } from '@/types/customer';
 
 export type BookingCardProps = {
   booking: Booking;
-  onViewDetails: () => void;
-  onCancel?: () => void;
-  onTrack?: () => void;
+  onPress: () => void;
+  showDivider?: boolean;
 };
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
   upcoming: 'Upcoming',
-  ongoing: 'In progress',
-  completed: 'Completed',
+  ongoing: 'Live',
+  completed: 'Done',
   cancelled: 'Cancelled',
 };
 
-export function BookingCard({ booking, onViewDetails, onCancel, onTrack }: BookingCardProps) {
+const STATUS_TONE: Record<BookingStatus, 'neutral' | 'active' | 'done' | 'cancelled'> = {
+  upcoming: 'neutral',
+  ongoing: 'active',
+  completed: 'done',
+  cancelled: 'cancelled',
+};
+
+export function BookingCard({ booking, onPress, showDivider = false }: BookingCardProps) {
   const theme = useAppTheme();
-  const { colors, shadows } = theme.tokens;
+  const { colors } = theme.tokens;
+
+  const statusLabel =
+    booking.providerStatus === 'pending' && booking.status === 'upcoming'
+      ? 'Pending'
+      : STATUS_LABEL[booking.status];
+
+  const tone = STATUS_TONE[booking.status];
+  const badgeBg =
+    tone === 'active'
+      ? colors.primaryContainer
+      : tone === 'done'
+        ? colors.surfaceVariant
+        : tone === 'cancelled'
+          ? '#FCE8E8'
+          : colors.surfaceVariant;
+  const badgeColor =
+    tone === 'active'
+      ? colors.primaryDark
+      : tone === 'cancelled'
+        ? colors.error
+        : colors.textSecondary;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surfaceElevated }, shadows.md]}>
-      <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text variant="bodyLarge" style={{ fontWeight: '600', color: colors.textPrimary }}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.row,
+        showDivider && {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.divider,
+        },
+      ]}
+    >
+      <View style={[styles.dateBox, { backgroundColor: colors.surfaceVariant }]}>
+        <Text variant="labelSmall" style={{ color: colors.textTertiary, fontWeight: '600' }}>
+          {booking.date.split(' ')[0]}
+        </Text>
+        <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+          {booking.date.split(' ')[1]?.replace(',', '') ?? '—'}
+        </Text>
+      </View>
+
+      <View style={styles.body}>
+        <View style={styles.top}>
+          <Text variant="bodyLarge" numberOfLines={1} style={{ color: colors.textPrimary, flex: 1, fontWeight: '600' }}>
             {booking.service}
           </Text>
-          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 2 }}>
-            {booking.providerName}
-          </Text>
-        </View>
-        <Text variant="labelMedium" style={{ color: colors.textSecondary }}>
-          {booking.providerStatus === 'pending' && booking.status === 'upcoming'
-            ? 'Awaiting provider'
-            : STATUS_LABEL[booking.status]}
-        </Text>
-      </View>
-
-      <View style={styles.meta}>
-        <View style={styles.metaItem}>
-          <MaterialCommunityIcons name="calendar-outline" size={14} color={colors.textTertiary} />
-          <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
-            {booking.date} · {booking.time}
-          </Text>
-        </View>
-        <Text variant="bodyLarge" style={{ color: colors.textPrimary, fontWeight: '600' }}>
-          ₹{booking.price}
-        </Text>
-      </View>
-
-      <View style={styles.actions}>
-        <SecondaryButton
-          label="Details"
-          variant="outline"
-          onPress={onViewDetails}
-          style={styles.btn}
-        />
-        {booking.status === 'ongoing' && onTrack ? (
-          <SecondaryButton label="Track" onPress={onTrack} style={styles.btn} />
-        ) : null}
-        {(booking.status === 'upcoming' || booking.status === 'ongoing') && onCancel ? (
-          <Pressable onPress={onCancel} style={styles.cancel}>
-            <Text variant="labelMedium" style={{ color: colors.error }}>
-              Cancel
+          <View style={[styles.badge, { backgroundColor: badgeBg }]}>
+            <Text variant="labelSmall" style={{ color: badgeColor, fontWeight: '600' }}>
+              {statusLabel}
             </Text>
-          </Pressable>
-        ) : null}
+          </View>
+        </View>
+        <Text variant="bodySmall" numberOfLines={1} style={{ color: colors.textSecondary }}>
+          {booking.providerName}
+        </Text>
+        <View style={styles.meta}>
+          <MaterialCommunityIcons name="clock-outline" size={14} color={colors.textTertiary} />
+          <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
+            {booking.time}
+          </Text>
+          <Text variant="bodyMedium" style={{ color: colors.textPrimary, marginLeft: 'auto', fontWeight: '600' }}>
+            ₹{booking.price}
+          </Text>
+        </View>
       </View>
-    </View>
+
+      <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textTertiary} />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 16,
-    borderRadius: 18,
-    padding: 16,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  meta: {
-    flexDirection: 'row',
+  dateBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  btn: {
-    flex: 1,
-  },
-  cancel: {
+  body: { flex: 1, gap: 3 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  badge: {
     paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
 });

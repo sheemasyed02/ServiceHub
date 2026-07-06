@@ -17,7 +17,7 @@ export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerPro
   const { colors, gradients, shadows } = theme.tokens;
 
   return (
-    <Pressable onPress={onPress} style={[styles.wrap, shadows.md]}>
+    <Pressable onPress={onPress} style={[styles.wrap, shadows.sm]}>
       <ImageBackground
         source={{ uri: MOCK_IMAGES.offerBanner }}
         style={styles.banner}
@@ -54,8 +54,8 @@ export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerPro
 
 const styles = StyleSheet.create({
   wrap: {
-    marginHorizontal: 20,
-    borderRadius: 16,
+    marginHorizontal: 16,
+    borderRadius: 12,
     overflow: 'hidden',
   },
   banner: {

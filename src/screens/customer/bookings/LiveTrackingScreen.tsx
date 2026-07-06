@@ -11,7 +11,7 @@ import { cancelBooking } from '@/store';
 
 type Props = NativeStackScreenProps<BookingsStackParamList, 'LiveTracking'>;
 
-export function LiveTrackingScreen({ route }: Props) {
+export function LiveTrackingScreen({ route, navigation }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
   const dispatch = useAppDispatch();
@@ -58,7 +58,12 @@ export function LiveTrackingScreen({ route }: Props) {
             icon={
               <MaterialCommunityIcons name="message-text" size={18} color={colors.primaryDark} />
             }
-            onPress={() => undefined}
+            onPress={() =>
+              navigation.getParent()?.navigate('Chat', {
+                screen: 'ChatConversation',
+                params: { threadId: 't1' },
+              })
+            }
             style={styles.actionBtn}
           />
           <PrimaryButton
