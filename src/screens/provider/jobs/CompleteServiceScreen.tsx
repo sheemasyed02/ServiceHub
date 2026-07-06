@@ -5,16 +5,17 @@ import { Text } from 'react-native-paper';
 
 import { ProviderScreen } from '@/components/provider';
 import { PrimaryButton, SecondaryButton, TextInput, UploadButton } from '@/components/ui';
-import { getJobRequestById } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useProviderJob } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
+import { completeBooking } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderJobsStackParamList, 'CompleteService'>;
 
 export function CompleteServiceScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const job = getJobRequestById(route.params.jobId);
+  const dispatch = useAppDispatch();
+  const job = useProviderJob(route.params.jobId);
   const [materials, setMaterials] = useState('');
   const [charges, setCharges] = useState('');
   const [notes, setNotes] = useState('');
@@ -74,7 +75,10 @@ export function CompleteServiceScreen({ navigation, route }: Props) {
         <SecondaryButton label="Generate Invoice" onPress={() => {}} style={{ flex: 1 }} />
         <PrimaryButton
           label="Complete Service"
-          onPress={() => navigation.popToTop()}
+          onPress={() => {
+            dispatch(completeBooking(job.id));
+            navigation.popToTop();
+          }}
           style={{ flex: 1 }}
         />
       </View>

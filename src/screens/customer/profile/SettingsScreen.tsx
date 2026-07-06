@@ -4,15 +4,18 @@ import { Alert, StyleSheet, Switch, View } from 'react-native';
 
 import { CustomerScreen, ProfileMenuItem } from '@/components/customer';
 import { SecondaryButton } from '@/components/ui';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme } from '@/hooks';
 import { navigateToAuth } from '@/navigation/utils';
 import type { ProfileStackParamList } from '@/navigation/types/customer.types';
+import { logout } from '@/store';
+import { clearAuth } from '@/services/appStorage';
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'Settings'>;
 
 export function SettingsScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+  const dispatch = useAppDispatch();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
 
@@ -62,7 +65,11 @@ export function SettingsScreen({ navigation }: Props) {
           onPress={() =>
             Alert.alert('Logout', 'Are you sure?', [
               { text: 'Cancel', style: 'cancel' },
-              { text: 'Logout', onPress: () => navigateToAuth(navigation) },
+              { text: 'Logout', onPress: () => {
+                  dispatch(logout());
+                  clearAuth();
+                  navigateToAuth(navigation);
+                }},
             ])
           }
         />

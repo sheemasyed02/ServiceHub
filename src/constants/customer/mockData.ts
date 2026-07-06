@@ -1,4 +1,4 @@
-import type { AppNotification, Booking, Provider, SearchSuggestion } from '@/types/customer';
+import type { AppNotification, Provider, SearchSuggestion } from '@/types/customer';
 
 export const MOCK_USER = {
   name: 'Alex Johnson',
@@ -230,57 +230,6 @@ export const MOCK_PROVIDERS: Provider[] = [
   },
 ];
 
-export const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: 'BK-1024',
-    providerId: 'p1',
-    providerName: 'Rajesh Kumar',
-    service: 'Pipe Leak Fix',
-    date: 'Jul 8, 2026',
-    time: '10:30 AM',
-    status: 'upcoming',
-    price: 499,
-    address: '42, 5th Block, Koramangala',
-    otp: '4829',
-    estimatedArrival: '15 min',
-  },
-  {
-    id: 'BK-1023',
-    providerId: 'p4',
-    providerName: 'Vikram Singh',
-    service: 'AC Service',
-    date: 'Jul 5, 2026',
-    time: '2:00 PM',
-    status: 'ongoing',
-    price: 599,
-    address: '42, 5th Block, Koramangala',
-    otp: '7391',
-    estimatedArrival: '8 min',
-  },
-  {
-    id: 'BK-1020',
-    providerId: 'p3',
-    providerName: 'Meera Sharma',
-    service: '2 BHK Deep Clean',
-    date: 'Jun 28, 2026',
-    time: '9:00 AM',
-    status: 'completed',
-    price: 2199,
-    address: '42, 5th Block, Koramangala',
-  },
-  {
-    id: 'BK-1018',
-    providerId: 'p2',
-    providerName: 'Suresh Patel',
-    service: 'Switch Repair',
-    date: 'Jun 20, 2026',
-    time: '4:30 PM',
-    status: 'cancelled',
-    price: 349,
-    address: '42, 5th Block, Koramangala',
-  },
-];
-
 export const MOCK_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'n1',
@@ -333,8 +282,4 @@ export const MOCK_OFFERS = [
 
 export function getProviderById(id: string): Provider | undefined {
   return MOCK_PROVIDERS.find((p) => p.id === id);
-}
-
-export function getBookingById(id: string): Booking | undefined {
-  return MOCK_BOOKINGS.find((b) => b.id === id);
 }

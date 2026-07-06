@@ -10,6 +10,7 @@ import {
   OffersBanner,
   ProviderCard,
   SectionHeader,
+  SectionPanel,
 } from '@/components/customer';
 import { Avatar, SearchBar } from '@/components/ui';
 import { MOCK_OFFERS, MOCK_PROVIDERS } from '@/constants/customer';
@@ -29,7 +30,7 @@ export function HomeScreen({ navigation }: Props) {
 
   const header = (
     <LinearGradient
-      colors={['#FFF4D6', '#F4F6FA']}
+      colors={['#FFF4D6', '#E8EBF2']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.heroGradient}
@@ -37,10 +38,10 @@ export function HomeScreen({ navigation }: Props) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={{ flex: 1 }}>
-            <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
+            <Text variant="bodySmall" style={{ color: colors.textSecondary, fontWeight: '600' }}>
               {greeting}
             </Text>
-            <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+            <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '800' }}>
               Hi, {firstName}
             </Text>
           </View>
@@ -52,13 +53,15 @@ export function HomeScreen({ navigation }: Props) {
         <Pressable
           style={[
             styles.locationChip,
-            { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.sm },
+            { backgroundColor: colors.surface, ...shadows.sm },
           ]}
         >
-          <MaterialCommunityIcons name="map-marker" size={16} color={colors.primaryDark} />
+          <View style={[styles.locIcon, { backgroundColor: `${colors.primary}18` }]}>
+            <MaterialCommunityIcons name="map-marker" size={16} color={colors.primaryDark} />
+          </View>
           <Text
             variant="labelLarge"
-            style={{ color: colors.textPrimary, flex: 1 }}
+            style={{ color: colors.textPrimary, flex: 1, fontWeight: '600' }}
             numberOfLines={1}
           >
             {user.location}
@@ -71,6 +74,7 @@ export function HomeScreen({ navigation }: Props) {
             placeholder="What do you need help with?"
             editable={false}
             pointerEvents="none"
+            dense
           />
         </Pressable>
       </View>
@@ -79,33 +83,33 @@ export function HomeScreen({ navigation }: Props) {
 
   return (
     <CustomerScreen fixedHeader={header}>
-      <View style={styles.quickRow}>
-        {QUICK_ACTIONS.map((action) => (
-          <Pressable
-            key={action.label}
-            onPress={() =>
-              navigation.navigate('ProviderListing', {
-                categoryId: action.categoryId,
-                categoryTitle: action.label,
-              })
-            }
-            style={[
-              styles.quickChip,
-              { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.xs },
-            ]}
-          >
-            <View style={[styles.quickIcon, { backgroundColor: action.tint }]}>
-              <MaterialCommunityIcons name={action.icon} size={18} color={colors.primaryDark} />
-            </View>
-            <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '600' }}>
-              {action.label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      <SectionPanel style={styles.quickPanel} noPadding>
+        <View style={styles.quickGrid}>
+          {QUICK_ACTIONS.map((action) => (
+            <Pressable
+              key={action.label}
+              onPress={() =>
+                navigation.navigate('ProviderListing', {
+                  categoryId: action.categoryId,
+                  categoryTitle: action.label,
+                })
+              }
+              style={[styles.quickTile, { backgroundColor: action.tint }]}
+            >
+              <View style={[styles.quickIcon, { backgroundColor: colors.surface, ...shadows.xs }]}>
+                <MaterialCommunityIcons name={action.icon} size={20} color={colors.primaryDark} />
+              </View>
+              <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+                {action.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </SectionPanel>
 
       <SectionHeader
         title="Categories"
+        subtitle="Browse by service type"
         actionLabel="See all"
         onAction={() => navigation.navigate('ProviderListing', {})}
       />
@@ -115,9 +119,7 @@ export function HomeScreen({ navigation }: Props) {
         }
       />
 
-      <View style={styles.spacer} />
-
-      <SectionHeader title="Top picks" />
+      <SectionHeader title="Top picks" subtitle="Highly rated near you" />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -134,27 +136,26 @@ export function HomeScreen({ navigation }: Props) {
         ))}
       </ScrollView>
 
-      <View style={styles.spacer} />
-
       <SectionHeader
         title="Near you"
+        subtitle="Available providers nearby"
         actionLabel="View all"
         onAction={() => navigation.navigate('ProviderListing', {})}
       />
-      <View style={styles.list}>
-        {MOCK_PROVIDERS.slice(0, 3).map((p) => (
-          <ProviderCard
-            key={p.id}
-            provider={p}
-            onPress={() => navigation.navigate('ProviderProfile', { providerId: p.id })}
-            onBook={() => navigation.navigate('Booking', { providerId: p.id })}
-          />
-        ))}
-      </View>
+      <SectionPanel noPadding>
+        <View style={styles.list}>
+          {MOCK_PROVIDERS.slice(0, 3).map((p) => (
+            <ProviderCard
+              key={p.id}
+              provider={p}
+              onPress={() => navigation.navigate('ProviderProfile', { providerId: p.id })}
+              onBook={() => navigation.navigate('Booking', { providerId: p.id })}
+            />
+          ))}
+        </View>
+      </SectionPanel>
 
-      <View style={styles.spacer} />
-
-      <SectionHeader title="Offers" />
+      <SectionHeader title="Offers" subtitle="Save on your next booking" />
       <OffersBanner
         title={MOCK_OFFERS[0].title}
         subtitle={MOCK_OFFERS[0].subtitle}
@@ -167,52 +168,54 @@ export function HomeScreen({ navigation }: Props) {
 }
 
 const QUICK_ACTIONS = [
-  { label: 'Plumber', icon: 'pipe-wrench' as const, categoryId: 'plumber', tint: '#EFF6FF' },
-  { label: 'Electrician', icon: 'flash' as const, categoryId: 'electrician', tint: '#FEF9C3' },
-  { label: 'Cleaning', icon: 'broom' as const, categoryId: 'cleaner', tint: '#ECFDF5' },
-  { label: 'Salon', icon: 'content-cut' as const, categoryId: 'salon', tint: '#FDF2F8' },
+  { label: 'Plumber', icon: 'pipe-wrench' as const, categoryId: 'plumber', tint: '#DBEAFE' },
+  { label: 'Electrician', icon: 'flash' as const, categoryId: 'electrician', tint: '#FEF08A' },
+  { label: 'Cleaning', icon: 'broom' as const, categoryId: 'cleaner', tint: '#BBF7D0' },
+  { label: 'Salon', icon: 'content-cut' as const, categoryId: 'salon', tint: '#FBCFE8' },
 ];
 
 const styles = StyleSheet.create({
   heroGradient: { paddingBottom: 4 },
-  header: { paddingHorizontal: 20, gap: 14, paddingBottom: 12, paddingTop: 8 },
+  header: { paddingHorizontal: 16, gap: 12, paddingBottom: 14, paddingTop: 8 },
   headerTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   locationChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  search: { marginTop: 2 },
-  quickRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 10,
-    paddingHorizontal: 20,
-    marginTop: 16,
-    marginBottom: 22,
-  },
-  quickChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
     paddingHorizontal: 12,
-    paddingVertical: 11,
-    borderRadius: 14,
-    borderWidth: 1,
-    width: '47%',
+    paddingVertical: 10,
+    borderRadius: 16,
   },
-  quickIcon: {
-    width: 34,
-    height: 34,
+  locIcon: {
+    width: 32,
+    height: 32,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  spacer: { height: 22 },
-  hScroll: { paddingHorizontal: 20, gap: 12 },
-  list: { paddingHorizontal: 20, gap: 12 },
+  search: { marginTop: 0 },
+  quickPanel: {
+    marginTop: 16,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 12,
+    gap: 10,
+  },
+  quickTile: {
+    width: '47%',
+    borderRadius: 16,
+    padding: 14,
+    gap: 10,
+  },
+  quickIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hScroll: { paddingHorizontal: 16, gap: 12, paddingBottom: 4 },
+  list: { padding: 12, gap: 10 },
 });

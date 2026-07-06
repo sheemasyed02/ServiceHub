@@ -5,16 +5,17 @@ import { Text } from 'react-native-paper';
 
 import { ProviderScreen } from '@/components/provider';
 import { Avatar, PrimaryButton, SecondaryButton } from '@/components/ui';
-import { getJobRequestById } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useProviderJob } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
+import { acceptBooking } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderJobsStackParamList, 'ActiveJob'>;
 
 export function ActiveJobScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const job = getJobRequestById(route.params.jobId);
+  const dispatch = useAppDispatch();
+  const job = useProviderJob(route.params.jobId);
 
   if (!job) {
     return (
@@ -81,7 +82,10 @@ export function ActiveJobScreen({ navigation, route }: Props) {
 
       <PrimaryButton
         label="Start Service"
-        onPress={() => navigation.navigate('ServiceStart', { jobId: job.id })}
+        onPress={() => {
+          dispatch(acceptBooking(job.id));
+          navigation.navigate('ServiceStart', { jobId: job.id });
+        }}
         style={{ marginHorizontal: 20, marginTop: 8 }}
       />
     </ProviderScreen>

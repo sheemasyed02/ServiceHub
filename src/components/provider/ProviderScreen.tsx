@@ -10,6 +10,7 @@ export type ProviderScreenProps = {
   contentStyle?: ViewStyle;
   bottomPadding?: number;
   edges?: ('top' | 'bottom' | 'left' | 'right')[];
+  fixedHeader?: React.ReactNode;
 };
 
 export function ProviderScreen({
@@ -19,9 +20,28 @@ export function ProviderScreen({
   contentStyle,
   bottomPadding = 100,
   edges = ['top', 'left', 'right'],
+  fixedHeader,
 }: ProviderScreenProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+
+  if (fixedHeader) {
+    return (
+      <View style={[styles.safe, { backgroundColor: colors.background }, style]}>
+        <SafeAreaView edges={['top', 'left', 'right']} style={{ backgroundColor: colors.background }}>
+          {fixedHeader}
+        </SafeAreaView>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding }, contentStyle]}
+          style={styles.flex}
+        >
+          {children}
+        </ScrollView>
+      </View>
+    );
+  }
 
   if (!scroll) {
     return (
@@ -41,6 +61,7 @@ export function ProviderScreen({
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
         contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding }, contentStyle]}
       >
         {children}
@@ -51,6 +72,7 @@ export function ProviderScreen({
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
+  flex: { flex: 1 },
   fill: { flex: 1 },
   scroll: { flexGrow: 1 },
 });

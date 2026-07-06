@@ -18,13 +18,15 @@ export const colors = {
   onSecondaryContainer: '#1A1814',
 
   // Surfaces
-  background: '#F4F6FA',
-  onBackground: '#111827',
+  background: '#E8EBF2',
+  onBackground: '#0F172A',
   surface: '#FFFFFF',
-  onSurface: '#111827',
-  surfaceVariant: '#F3F4F6',
-  onSurfaceVariant: '#6B7280',
+  onSurface: '#0F172A',
+  surfaceVariant: '#F1F3F8',
+  onSurfaceVariant: '#64748B',
   surfaceElevated: '#FFFFFF',
+  surfaceMuted: '#DDE2EC',
+  sectionTint: '#F5F6FA',
   surfaceDisabled: 'rgba(24, 24, 27, 0.06)',
   onSurfaceDisabled: 'rgba(24, 24, 27, 0.38)',
 
@@ -51,16 +53,16 @@ export const colors = {
   onWarningContainer: '#9A3412',
 
   // Borders & dividers
-  border: '#E5E7EB',
-  borderLight: '#F3F4F6',
+  border: '#D8DEE8',
+  borderLight: '#E8ECF3',
   outline: '#D1D5DB',
   outlineVariant: '#E5E7EB',
   divider: '#F3F4F6',
 
   // Text hierarchy
-  textPrimary: '#111827',
-  textSecondary: '#6B7280',
-  textTertiary: '#9CA3AF',
+  textPrimary: '#0F172A',
+  textSecondary: '#64748B',
+  textTertiary: '#94A3B8',
   textInverse: '#FFFFFF',
   textLink: '#9A7B18',
 

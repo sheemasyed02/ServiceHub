@@ -7,10 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { JobRequestCard } from '@/components/provider';
 import { NoJobsEmptyState } from '@/components/ui/empty-states';
 import { SkeletonList } from '@/components/ui/skeleton';
-import { MOCK_JOB_REQUESTS } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useCurrentProviderProfile, useProviderPendingRequests } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
-import type { JobRequest } from '@/types/provider';
+import { acceptBooking, rejectBooking } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderJobsStackParamList, 'JobRequests'>;
 
@@ -18,14 +17,13 @@ export function JobRequestsScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
+  const provider = useCurrentProviderProfile();
+  const pendingRequests = useProviderPendingRequests();
   const [loading, setLoading] = useState(true);
-  const [requests, setRequests] = useState<JobRequest[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setRequests(MOCK_JOB_REQUESTS.filter((j) => j.status === 'pending'));
-      setLoading(false);
-    }, 800);
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -36,25 +34,30 @@ export function JobRequestsScreen({ navigation }: Props) {
           Job Requests
         </Text>
         <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
-          Swipe left on a card for quick actions
+          {provider
+            ? `Showing requests for ${provider.name} only`
+            : 'Accept or decline customer bookings assigned to you'}
         </Text>
       </View>
 
       {loading ? (
         <SkeletonList count={3} />
-      ) : requests.length === 0 ? (
+      ) : pendingRequests.length === 0 ? (
         <NoJobsEmptyState style={{ flex: 1 }} />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}
         >
-          {requests.map((req) => (
+          {pendingRequests.map((req) => (
             <View key={req.id} style={{ marginBottom: 10 }}>
               <JobRequestCard
                 request={req}
-                onAccept={() => navigation.navigate('ActiveJob', { jobId: req.id })}
-                onReject={() => setRequests((prev) => prev.filter((r) => r.id !== req.id))}
+                onAccept={() => {
+                  dispatch(acceptBooking(req.id));
+                  navigation.navigate('ActiveJob', { jobId: req.id });
+                }}
+                onReject={() => dispatch(rejectBooking(req.id))}
                 onPress={() => navigation.navigate('ActiveJob', { jobId: req.id })}
               />
             </View>

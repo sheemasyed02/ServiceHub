@@ -1,5 +1,7 @@
 export type BookingStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 
+export type ProviderResponseStatus = 'pending' | 'accepted' | 'rejected';
+
 export type CustomerCategory = {
   id: string;
   title: string;
@@ -44,16 +46,25 @@ export type Provider = {
 
 export type Booking = {
   id: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  customerAvatar?: string;
   providerId: string;
   providerName: string;
+  categoryId: string;
   service: string;
   date: string;
   time: string;
   status: BookingStatus;
+  providerStatus: ProviderResponseStatus;
   price: number;
   address: string;
+  description?: string;
+  coupon?: string;
   otp?: string;
   estimatedArrival?: string;
+  createdAt: string;
 };
 
 export type AppNotification = {

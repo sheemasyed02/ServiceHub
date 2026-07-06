@@ -5,25 +5,41 @@ import { useAppTheme } from '@/hooks';
 
 export type SectionHeaderProps = {
   title: string;
+  subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
+  inset?: boolean;
 };
 
-export function SectionHeader({ title, actionLabel, onAction }: SectionHeaderProps) {
+export function SectionHeader({
+  title,
+  subtitle,
+  actionLabel,
+  onAction,
+  inset = false,
+}: SectionHeaderProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, inset && styles.inset]}>
       <View style={styles.titleWrap}>
-        <View style={[styles.accent, { backgroundColor: colors.primary }]} />
-        <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+        <Text variant="titleMedium" style={{ color: colors.textPrimary, fontWeight: '800' }}>
           {title}
         </Text>
+        {subtitle ? (
+          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 2 }}>
+            {subtitle}
+          </Text>
+        ) : null}
       </View>
       {actionLabel && onAction ? (
-        <Pressable onPress={onAction} hitSlop={8}>
-          <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '600' }}>
+        <Pressable
+          onPress={onAction}
+          hitSlop={8}
+          style={[styles.actionBtn, { backgroundColor: `${colors.primary}14` }]}
+        >
+          <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '700' }}>
             {actionLabel}
           </Text>
         </Pressable>
@@ -38,16 +54,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+    marginBottom: 14,
+    gap: 12,
+  },
+  inset: {
+    paddingHorizontal: 0,
     marginBottom: 12,
   },
   titleWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    flex: 1,
+    gap: 0,
   },
-  accent: {
-    width: 4,
-    height: 18,
-    borderRadius: 2,
+  actionBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
   },
 });

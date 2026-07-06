@@ -31,7 +31,7 @@ export function CategoryScroller({ selectedId, onSelect }: CategoryScrollerProps
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     gap: 12,
   },
   spacer: {

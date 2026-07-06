@@ -5,9 +5,9 @@ import { Text } from 'react-native-paper';
 
 import { BookingCard, CustomerScreen } from '@/components/customer';
 import { EmptyState } from '@/components/ui';
-import { MOCK_BOOKINGS } from '@/constants/customer';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useCustomerBookingsByStatus } from '@/hooks';
 import type { BookingsStackParamList } from '@/navigation/types/customer.types';
+import { cancelBooking } from '@/store';
 import type { BookingStatus } from '@/types/customer';
 
 type Props = NativeStackScreenProps<BookingsStackParamList, 'MyBookings'>;
@@ -22,9 +22,10 @@ const TABS: { key: BookingStatus; label: string }[] = [
 export function MyBookingsScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<BookingStatus>('upcoming');
 
-  const bookings = MOCK_BOOKINGS.filter((b) => b.status === activeTab);
+  const bookings = useCustomerBookingsByStatus(activeTab);
 
   return (
     <CustomerScreen>
@@ -82,7 +83,7 @@ export function MyBookingsScreen({ navigation }: Props) {
               key={booking.id}
               booking={booking}
               onViewDetails={() => navigation.navigate('BookingDetails', { bookingId: booking.id })}
-              onCancel={() => undefined}
+              onCancel={() => dispatch(cancelBooking(booking.id))}
               onTrack={
                 booking.status === 'ongoing'
                   ? () => navigation.navigate('LiveTracking', { bookingId: booking.id })

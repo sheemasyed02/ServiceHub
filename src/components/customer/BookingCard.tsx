@@ -22,10 +22,10 @@ const STATUS_LABEL: Record<BookingStatus, string> = {
 
 export function BookingCard({ booking, onViewDetails, onCancel, onTrack }: BookingCardProps) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, shadows } = theme.tokens;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+    <View style={[styles.card, { backgroundColor: colors.surface }, shadows.md]}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text variant="bodyLarge" style={{ fontWeight: '600', color: colors.textPrimary }}>
@@ -36,7 +36,9 @@ export function BookingCard({ booking, onViewDetails, onCancel, onTrack }: Booki
           </Text>
         </View>
         <Text variant="labelMedium" style={{ color: colors.textSecondary }}>
-          {STATUS_LABEL[booking.status]}
+          {booking.providerStatus === 'pending' && booking.status === 'upcoming'
+            ? 'Awaiting provider'
+            : STATUS_LABEL[booking.status]}
         </Text>
       </View>
 
@@ -76,10 +78,9 @@ export function BookingCard({ booking, onViewDetails, onCancel, onTrack }: Booki
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 14,
+    marginHorizontal: 16,
+    borderRadius: 18,
+    padding: 16,
     gap: 12,
   },
   header: {

@@ -6,6 +6,7 @@ import { TextInput, type AppTextInputProps } from './TextInput';
 export type SearchBarProps = Omit<AppTextInputProps, 'leftIcon'> & {
   onClear?: () => void;
   containerStyle?: ViewStyle;
+  dense?: boolean;
 };
 
 export function SearchBar({
@@ -14,6 +15,7 @@ export function SearchBar({
   onClear,
   placeholder = 'Search services, providers...',
   containerStyle,
+  dense = false,
   ...props
 }: SearchBarProps) {
   const [query, setQuery] = useState(value ?? '');
@@ -40,6 +42,8 @@ export function SearchBar({
         rightIcon={(value ?? query).length > 0 ? 'close-circle' : undefined}
         onRightIconPress={handleClear}
         returnKeyType="search"
+        style={dense ? styles.denseInput : undefined}
+        containerStyle={dense ? styles.denseContainer : undefined}
       />
     </View>
   );
@@ -48,5 +52,12 @@ export function SearchBar({
 const styles = StyleSheet.create({
   wrap: {
     width: '100%',
+  },
+  denseContainer: {
+    gap: 0,
+  },
+  denseInput: {
+    paddingVertical: 10,
+    fontSize: 15,
   },
 });

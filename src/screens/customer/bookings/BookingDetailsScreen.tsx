@@ -5,16 +5,18 @@ import { Text } from 'react-native-paper';
 
 import { CustomerScreen, StatusTimeline } from '@/components/customer';
 import { Avatar, Card, PrimaryButton, SecondaryButton } from '@/components/ui';
-import { getBookingById, getProviderById } from '@/constants/customer';
-import { useAppTheme } from '@/hooks';
+import { getProviderById } from '@/constants/customer';
+import { useAppDispatch, useAppTheme, useBooking } from '@/hooks';
 import type { BookingsStackParamList } from '@/navigation/types/customer.types';
+import { cancelBooking } from '@/store';
 
 type Props = NativeStackScreenProps<BookingsStackParamList, 'BookingDetails'>;
 
 export function BookingDetailsScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
-  const booking = getBookingById(route.params.bookingId);
+  const dispatch = useAppDispatch();
+  const booking = useBooking(route.params.bookingId);
   const provider = booking ? getProviderById(booking.providerId) : undefined;
 
   if (!booking) {
@@ -30,8 +32,8 @@ export function BookingDetailsScreen({ navigation, route }: Props) {
     {
       label: 'Provider assigned',
       time: booking.time,
-      completed: booking.status !== 'cancelled',
-      active: booking.status === 'upcoming',
+      completed: booking.providerStatus === 'accepted' && booking.status !== 'cancelled',
+      active: booking.providerStatus === 'pending',
     },
     {
       label: 'On the way',
@@ -115,7 +117,11 @@ export function BookingDetailsScreen({ navigation, route }: Props) {
 
       <View style={styles.actions}>
         {(booking.status === 'upcoming' || booking.status === 'ongoing') && (
-          <SecondaryButton label="Cancel Booking" variant="outline" onPress={() => undefined} />
+          <SecondaryButton
+            label="Cancel Booking"
+            variant="outline"
+            onPress={() => dispatch(cancelBooking(booking.id))}
+          />
         )}
         {booking.status === 'ongoing' && (
           <PrimaryButton

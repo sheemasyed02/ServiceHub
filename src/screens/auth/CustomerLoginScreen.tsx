@@ -7,8 +7,10 @@ import { Checkbox, Text } from 'react-native-paper';
 import { AuthScreenLayout, SocialAuthButtons } from '@/components/auth';
 import { Divider, LoadingButton, PasswordInput, TextInput } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
+import { useAppDispatch } from '@/hooks';
 import { navigateToMain } from '@/navigation/utils';
 import type { AuthStackParamList } from '@/navigation/types';
+import { loginAsCustomer } from '@/store';
 import type { CustomerLoginFormValues } from '@/types/forms';
 import { validationRules } from '@/utils/validation';
 
@@ -17,6 +19,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'CustomerLogin'>;
 export function CustomerLoginScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+  const dispatch = useAppDispatch();
   const [submitting, setSubmitting] = useState(false);
   const passwordRef = useRef<RNTextInput>(null);
 
@@ -35,10 +38,11 @@ export function CustomerLoginScreen({ navigation }: Props) {
 
   const onSubmit = async (_values: CustomerLoginFormValues) => {
     setSubmitting(true);
+    dispatch(loginAsCustomer(undefined));
     setTimeout(() => {
       setSubmitting(false);
       navigateToMain(navigation);
-    }, 900);
+    }, 600);
   };
 
   return (

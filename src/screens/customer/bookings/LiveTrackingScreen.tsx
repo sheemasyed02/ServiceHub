@@ -5,16 +5,17 @@ import { Text } from 'react-native-paper';
 
 import { CustomerScreen, MapPlaceholder } from '@/components/customer';
 import { Card, PrimaryButton, SecondaryButton } from '@/components/ui';
-import { getBookingById } from '@/constants/customer';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useBooking } from '@/hooks';
 import type { BookingsStackParamList } from '@/navigation/types/customer.types';
+import { cancelBooking } from '@/store';
 
 type Props = NativeStackScreenProps<BookingsStackParamList, 'LiveTracking'>;
 
 export function LiveTrackingScreen({ route }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
-  const booking = getBookingById(route.params.bookingId);
+  const dispatch = useAppDispatch();
+  const booking = useBooking(route.params.bookingId);
 
   return (
     <CustomerScreen scroll={false} bottomPadding={0}>
@@ -64,7 +65,9 @@ export function LiveTrackingScreen({ route }: Props) {
             label="Cancel"
             tone="secondary"
             fullWidth={false}
-            onPress={() => undefined}
+            onPress={() => {
+              if (booking) dispatch(cancelBooking(booking.id));
+            }}
             style={styles.actionBtn}
           />
         </View>

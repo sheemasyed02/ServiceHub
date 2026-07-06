@@ -5,7 +5,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider as ReduxProvider } from 'react-redux';
 
-import { CustomerStoreHydrator } from '@/components/CustomerStoreHydrator';
+import { AppStoreHydrator } from '@/components/AppStoreHydrator';
 import { queryClient } from '@/services';
 import { store } from '@/store';
 import { theme } from '@/theme';
@@ -21,7 +21,7 @@ export function AppProviders({ children }: PropsWithChildren) {
               icon: (props) => <MaterialCommunityIcons {...props} />,
             }}
           >
-            <CustomerStoreHydrator />
+            <AppStoreHydrator />
             {children}
           </PaperProvider>
         </QueryClientProvider>

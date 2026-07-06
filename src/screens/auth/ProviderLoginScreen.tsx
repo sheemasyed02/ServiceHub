@@ -7,8 +7,11 @@ import { Text } from 'react-native-paper';
 import { AuthScreenLayout, ProviderBrandHeader } from '@/components/auth';
 import { LoadingButton, PasswordInput, SecondaryButton, TextInput } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
+import { resolveProviderIdFromEmail } from '@/constants/provider/accounts';
+import { useAppDispatch } from '@/hooks';
 import { navigateToProviderMain } from '@/navigation/utils';
 import type { AuthStackParamList } from '@/navigation/types';
+import { loginAsProvider } from '@/store';
 import type { ProviderLoginFormValues } from '@/types/forms';
 import { validationRules } from '@/utils/validation';
 
@@ -17,6 +20,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'ProviderLogin'>;
 export function ProviderLoginScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+  const dispatch = useAppDispatch();
   const [submitting, setSubmitting] = useState(false);
   const passwordRef = useRef<RNTextInput>(null);
 
@@ -29,12 +33,14 @@ export function ProviderLoginScreen({ navigation }: Props) {
     mode: 'onSubmit',
   });
 
-  const onSubmit = async (_values: ProviderLoginFormValues) => {
+  const onSubmit = async (values: ProviderLoginFormValues) => {
     setSubmitting(true);
+    const providerId = resolveProviderIdFromEmail(values.email);
+    dispatch(loginAsProvider({ providerId }));
     setTimeout(() => {
       setSubmitting(false);
       navigateToProviderMain(navigation);
-    }, 900);
+    }, 600);
   };
 
   return (
@@ -107,6 +113,10 @@ export function ProviderLoginScreen({ navigation }: Props) {
         onPress={() => navigation.navigate('ProviderRegister')}
         variant="outline"
       />
+
+      <Text variant="bodySmall" style={{ color: colors.textTertiary, textAlign: 'center', marginTop: 8 }}>
+        Demo logins: rajesh@servicehub.com (plumber), anjali@servicehub.com or salon@servicehub.com (salon)
+      </Text>
 
       <Pressable onPress={() => navigation.navigate('CustomerLogin')} style={styles.switch}>
         <Text variant="bodyMedium" style={{ color: colors.textSecondary, textAlign: 'center' }}>

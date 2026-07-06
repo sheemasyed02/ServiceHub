@@ -6,8 +6,7 @@ import { Text } from 'react-native-paper';
 
 import { CustomerScreen } from '@/components/customer';
 import { Card, PrimaryButton, SecondaryButton } from '@/components/ui';
-import { getBookingById } from '@/constants/customer';
-import { useAppTheme } from '@/hooks';
+import { useAppTheme, useBooking } from '@/hooks';
 import type { HomeStackParamList } from '@/navigation/types/customer.types';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'BookingConfirmation'>;
@@ -16,13 +15,7 @@ export function BookingConfirmationScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
   const scale = useRef(new Animated.Value(0)).current;
-  const booking = getBookingById(route.params.bookingId) ?? {
-    id: route.params.bookingId,
-    providerName: 'Rajesh Kumar',
-    date: 'Jul 10, 2026',
-    time: '10:30 AM',
-    estimatedArrival: '15 min',
-  };
+  const booking = useBooking(route.params.bookingId);
 
   useEffect(() => {
     Animated.spring(scale, {
@@ -32,6 +25,14 @@ export function BookingConfirmationScreen({ navigation, route }: Props) {
       useNativeDriver: true,
     }).start();
   }, [scale]);
+
+  if (!booking) {
+    return (
+      <CustomerScreen contentStyle={styles.center}>
+        <Text>Booking not found.</Text>
+      </CustomerScreen>
+    );
+  }
 
   return (
     <CustomerScreen contentStyle={styles.center}>
@@ -51,7 +52,7 @@ export function BookingConfirmationScreen({ navigation, route }: Props) {
         variant="bodyMedium"
         style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 8 }}
       >
-        Your service has been scheduled.
+        Your service has been scheduled. Waiting for provider confirmation.
       </Text>
 
       <Card variant="outlined" padding={20} style={StyleSheet.flatten([styles.card, shadows.sm])}>

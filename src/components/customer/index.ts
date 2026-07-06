@@ -35,5 +35,8 @@ export type { SearchResultItemProps } from './SearchResultItem';
 export { SectionHeader } from './SectionHeader';
 export type { SectionHeaderProps } from './SectionHeader';
 
+export { SectionPanel } from './SectionPanel';
+export type { SectionPanelProps } from './SectionPanel';
+
 export { StatusTimeline } from './StatusTimeline';
 export type { StatusTimelineProps, TimelineStep } from './StatusTimeline';

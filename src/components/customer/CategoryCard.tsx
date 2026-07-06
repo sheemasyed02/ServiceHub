@@ -35,10 +35,9 @@ export function CategoryCard({ category, selected = false, onPress }: CategoryCa
       style={[
         styles.card,
         {
-          backgroundColor: selected ? `${colors.primary}14` : colors.surface,
-          borderColor: selected ? colors.primary : colors.border,
+          backgroundColor: selected ? `${colors.primary}16` : colors.surface,
         },
-        shadows.xs,
+        shadows.sm,
       ]}
     >
       <View style={[styles.iconWrap, { backgroundColor: tint }]}>
@@ -65,7 +64,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 8,
     borderRadius: 18,
-    borderWidth: 1,
     alignItems: 'center',
     gap: 10,
   },

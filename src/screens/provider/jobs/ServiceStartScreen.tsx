@@ -5,16 +5,17 @@ import { Text } from 'react-native-paper';
 
 import { ProviderScreen } from '@/components/provider';
 import { OtpInput, PrimaryButton, TextInput, UploadButton } from '@/components/ui';
-import { getJobRequestById } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useProviderJob } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
+import { startBooking } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderJobsStackParamList, 'ServiceStart'>;
 
 export function ServiceStartScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const job = getJobRequestById(route.params.jobId);
+  const dispatch = useAppDispatch();
+  const job = useProviderJob(route.params.jobId);
   const [otp, setOtp] = useState('');
   const [notes, setNotes] = useState('');
   const [verified, setVerified] = useState(false);
@@ -22,7 +23,10 @@ export function ServiceStartScreen({ navigation, route }: Props) {
   if (!job) return null;
 
   const handleVerify = () => {
-    if (otp === job.otp) setVerified(true);
+    if (otp === job.otp) {
+      setVerified(true);
+      dispatch(startBooking(job.id));
+    }
   };
 
   return (

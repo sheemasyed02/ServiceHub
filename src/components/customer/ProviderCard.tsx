@@ -35,8 +35,8 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
         <Animated.View
           style={[
             styles.compact,
-            { transform: [{ scale }], backgroundColor: colors.surface, borderColor: colors.border },
-            shadows.sm,
+            { transform: [{ scale }], backgroundColor: colors.surface },
+            shadows.md,
           ]}
         >
           <AppImage
@@ -72,8 +72,8 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
       <Animated.View
         style={[
           styles.card,
-          { transform: [{ scale }], backgroundColor: colors.surface, borderColor: colors.border },
-          shadows.sm,
+          { transform: [{ scale }], backgroundColor: colors.surface },
+          shadows.md,
         ]}
       >
         <Avatar source={avatarSource} name={provider.name} size="lg" />
@@ -130,8 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 14,
     padding: 14,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: 18,
   },
   body: { flex: 1, gap: 4 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -144,13 +143,12 @@ const styles = StyleSheet.create({
   },
   bookBtn: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingVertical: 9,
+    borderRadius: 12,
   },
   compact: {
     width: 168,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: 18,
     overflow: 'hidden',
   },
   compactImage: { width: '100%' },

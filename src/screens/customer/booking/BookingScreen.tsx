@@ -19,8 +19,10 @@ import {
   SAVED_ADDRESSES,
   getProviderById,
 } from '@/constants/customer';
-import { useAppTheme } from '@/hooks';
+import { useAppDispatch, useAppTheme, useAuth, useCustomerUser } from '@/hooks';
 import type { HomeStackParamList } from '@/navigation/types/customer.types';
+import { createBooking } from '@/store';
+import { generateBookingId } from '@/utils/bookingHelpers';
 import type { PickedMedia } from '@/utils/mediaPicker';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Booking'>;
@@ -44,6 +46,9 @@ function getDiscount(code: string, basePrice: number) {
 export function BookingScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
+  const dispatch = useAppDispatch();
+  const { customerId } = useAuth();
+  const customer = useCustomerUser();
   const provider = getProviderById(route.params.providerId);
   const [images, setImages] = useState<PickedMedia[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -80,12 +85,34 @@ export function BookingScreen({ navigation, route }: Props) {
     );
   }
 
-  const onSubmit = () => {
+  const onSubmit = (values: BookingForm) => {
+    if (!provider || !selectedAddress) return;
+
+    const bookingId = generateBookingId();
     setSubmitting(true);
+    dispatch(
+      createBooking({
+        id: bookingId,
+        customerId,
+        customerName: customer.name,
+        customerPhone: customer.phone,
+        customerAvatar: 'https://i.pravatar.cc/150?u=alex-customer',
+        providerId: provider.id,
+        providerName: provider.name,
+        categoryId: provider.categoryId,
+        service: values.service,
+        date: values.date,
+        time: values.time,
+        price: total,
+        address: selectedAddress.address,
+        description: values.description,
+        coupon: values.coupon || undefined,
+      }),
+    );
     setTimeout(() => {
       setSubmitting(false);
-      navigation.replace('BookingConfirmation', { bookingId: 'BK-1025' });
-    }, 900);
+      navigation.replace('BookingConfirmation', { bookingId });
+    }, 400);
   };
 
   return (

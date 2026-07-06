@@ -8,19 +8,23 @@ import { CustomerScreen, ProfileMenuItem } from '@/components/customer';
 import { Avatar, SecondaryButton } from '@/components/ui';
 import { MOCK_IMAGES } from '@/constants/customer/images';
 import { useAppTheme, useCustomerUser } from '@/hooks';
+import { useAppDispatch } from '@/hooks';
 import { navigateToAuth } from '@/navigation/utils';
 import type { ProfileStackParamList } from '@/navigation/types/customer.types';
+import { logout } from '@/store';
+import { clearAuth } from '@/services/appStorage';
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
 
 export function ProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
+  const dispatch = useAppDispatch();
   const user = useCustomerUser();
 
   const header = (
     <LinearGradient
-      colors={['#FFF4D6', '#F4F6FA']}
+      colors={['#FFF4D6', '#E8EBF2']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.hero}
@@ -113,7 +117,11 @@ export function ProfileScreen({ navigation }: Props) {
           onPress={() =>
             Alert.alert('Logout', 'Are you sure you want to logout?', [
               { text: 'Cancel', style: 'cancel' },
-              { text: 'Logout', style: 'destructive', onPress: () => navigateToAuth(navigation) },
+              { text: 'Logout', style: 'destructive', onPress: () => {
+                  dispatch(logout());
+                  clearAuth();
+                  navigateToAuth(navigation);
+                }},
             ])
           }
         />

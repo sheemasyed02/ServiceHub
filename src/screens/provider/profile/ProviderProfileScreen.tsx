@@ -1,13 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ProviderScreen } from '@/components/provider';
 import { Avatar, PrimaryButton, RatingStars } from '@/components/ui';
-import { MOCK_PROVIDER_USER } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { useAppTheme, useCurrentProviderProfile } from '@/hooks';
 import type { ProviderProfileStackParamList } from '@/navigation/types/provider.types';
 
 type Props = NativeStackScreenProps<ProviderProfileStackParamList, 'ProfileMain'>;
@@ -25,65 +24,81 @@ const MENU_ITEMS: { label: string; icon: IconName; screen: keyof ProviderProfile
 
 export function ProviderProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
-  const insets = useSafeAreaInsets();
-  const user = MOCK_PROVIDER_USER;
+  const { colors, shadows } = theme.tokens;
+  const user = useCurrentProviderProfile();
 
-  return (
-    <ProviderScreen edges={[]} bottomPadding={120}>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+  if (!user) {
+    return (
+      <ProviderScreen>
+        <Text style={{ padding: 20 }}>Provider profile not loaded.</Text>
+      </ProviderScreen>
+    );
+  }
+
+  const header = (
+    <LinearGradient colors={['#FFF4D6', '#E8EBF2']} style={styles.hero}>
+      <View style={[styles.profileCard, { backgroundColor: colors.surface, ...shadows.md }]}>
         <Avatar source={{ uri: user.avatar }} name={user.name} size="xl" />
         <View style={styles.nameRow}>
-          <Text variant="headlineSmall" style={{ color: colors.textPrimary }}>
+          <Text variant="titleLarge" style={{ color: colors.textPrimary, fontWeight: '800' }}>
             {user.name}
           </Text>
           {user.verified ? (
             <MaterialCommunityIcons name="check-decagram" size={22} color={colors.primary} />
           ) : null}
         </View>
-        <Text variant="bodyMedium" style={{ color: colors.textSecondary }}>
+        <Text variant="bodyMedium" style={{ color: colors.textSecondary, textAlign: 'center' }}>
           {user.profession} · {user.experience}
         </Text>
         <View style={styles.ratingRow}>
           <RatingStars rating={user.rating} size={16} readonly />
           <Text variant="labelMedium" style={{ color: colors.textSecondary }}>
-            {user.rating} · {user.completedJobs} jobs completed
+            {user.rating} · {user.completedJobs} jobs
           </Text>
         </View>
         <PrimaryButton
           label="Edit Profile"
           tone="secondary"
           onPress={() => navigation.navigate('EditProfile')}
-          style={{ marginTop: 16, maxWidth: 200 }}
-          fullWidth={false}
+          style={{ marginTop: 14, alignSelf: 'stretch' }}
         />
       </View>
+    </LinearGradient>
+  );
 
-      <InfoSection title="Languages" items={user.languages} />
-      <InfoSection title="Skills" items={user.skills} />
-      <InfoSection title="Certificates" items={user.certificates} />
-      <InfoBlock title="Working hours" value={user.workingHours} />
-      <InfoBlock title="Service areas" value={user.serviceAreas.join(', ')} />
+  return (
+    <ProviderScreen fixedHeader={header} bottomPadding={120} contentStyle={styles.body}>
+      <View style={[styles.infoCard, { backgroundColor: colors.surface, ...shadows.sm }]}>
+        <InfoSection title="Languages" items={user.languages} />
+        <InfoSection title="Skills" items={user.skills} />
+        <InfoSection title="Certificates" items={user.certificates} />
+        <InfoBlock title="Working hours" value={user.workingHours} />
+        <InfoBlock title="Service areas" value={user.serviceAreas.join(', ')} last />
+      </View>
 
-      <View style={styles.menu}>
-        {MENU_ITEMS.map((item) => (
+      <View style={[styles.menu, { backgroundColor: colors.surface, ...shadows.sm }]}>
+        {MENU_ITEMS.map((item, index) => (
           <Pressable
             key={item.label}
             onPress={() => navigation.navigate(item.screen)}
             style={[
               styles.menuItem,
-              { backgroundColor: colors.surface, borderColor: colors.border },
+              index < MENU_ITEMS.length - 1 && {
+                borderBottomWidth: 1,
+                borderBottomColor: colors.borderLight,
+              },
             ]}
           >
-            <MaterialCommunityIcons name={item.icon} size={22} color={colors.primaryDark} />
-            <Text variant="bodyLarge" style={{ color: colors.textPrimary, flex: 1 }}>
+            <View style={[styles.menuIcon, { backgroundColor: `${colors.primary}12` }]}>
+              <MaterialCommunityIcons name={item.icon} size={20} color={colors.primaryDark} />
+            </View>
+            <Text variant="bodyLarge" style={{ color: colors.textPrimary, flex: 1, fontWeight: '600' }}>
               {item.label}
             </Text>
             <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textTertiary} />
           </Pressable>
         ))}
       </View>
-      <View style={{ height: 24 }} />
     </ProviderScreen>
   );
 }
@@ -94,16 +109,13 @@ function InfoSection({ title, items }: { title: string; items: string[] }) {
 
   return (
     <View style={styles.section}>
-      <Text
-        variant="titleSmall"
-        style={{ color: colors.textPrimary, fontWeight: '600', marginBottom: 8 }}
-      >
+      <Text variant="labelLarge" style={{ color: colors.textPrimary, fontWeight: '700', marginBottom: 8 }}>
         {title}
       </Text>
       <View style={styles.chips}>
         {items.map((item) => (
-          <View key={item} style={[styles.chip, { backgroundColor: colors.surfaceVariant }]}>
-            <Text variant="labelMedium" style={{ color: colors.textPrimary }}>
+          <View key={item} style={[styles.chip, { backgroundColor: colors.sectionTint }]}>
+            <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '600' }}>
               {item}
             </Text>
           </View>
@@ -113,19 +125,16 @@ function InfoSection({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function InfoBlock({ title, value }: { title: string; value: string }) {
+function InfoBlock({ title, value, last }: { title: string; value: string; last?: boolean }) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <View style={styles.section}>
-      <Text
-        variant="titleSmall"
-        style={{ color: colors.textPrimary, fontWeight: '600', marginBottom: 4 }}
-      >
+    <View style={[styles.section, last && { marginBottom: 0 }]}>
+      <Text variant="labelLarge" style={{ color: colors.textPrimary, fontWeight: '700', marginBottom: 4 }}>
         {title}
       </Text>
-      <Text variant="bodyMedium" style={{ color: colors.textSecondary }}>
+      <Text variant="bodyMedium" style={{ color: colors.textSecondary, lineHeight: 22 }}>
         {value}
       </Text>
     </View>
@@ -133,19 +142,59 @@ function InfoBlock({ title, value }: { title: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: 'center', paddingHorizontal: 20, marginBottom: 24 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
-  section: { paddingHorizontal: 20, marginBottom: 16 },
+  hero: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 16,
+  },
+  profileCard: {
+    borderRadius: 22,
+    padding: 20,
+    alignItems: 'center',
+    gap: 6,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 10,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  body: {
+    paddingTop: 4,
+  },
+  infoCard: {
+    marginHorizontal: 16,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+  },
+  section: { marginBottom: 16 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  menu: { paddingHorizontal: 20, gap: 8, marginTop: 8 },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10 },
+  menu: {
+    marginHorizontal: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

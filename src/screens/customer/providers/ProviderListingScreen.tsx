@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
@@ -59,60 +60,52 @@ export function ProviderListingScreen({ navigation, route }: Props) {
 
   const screenTitle = categoryTitle ? categoryTitle : categoryId ? 'Providers' : 'All Providers';
 
-  return (
-    <CustomerScreen scroll={false} bottomPadding={0}>
-      <View style={styles.topBar}>
+  const header = (
+    <LinearGradient colors={['#FFF4D6', '#E8EBF2']} style={styles.hero}>
+      <View style={styles.heroTop}>
         <Pressable
           onPress={() => navigation.goBack()}
           hitSlop={12}
-          style={[styles.backBtn, { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.xs }]}
+          style={[styles.backBtn, { backgroundColor: colors.surface, ...shadows.sm }]}
         >
           <MaterialCommunityIcons name="arrow-left" size={22} color={colors.textPrimary} />
         </Pressable>
-      </View>
-
-      <View style={styles.header}>
-        {categoryId ? (
-          <View style={[styles.categoryBadge, { backgroundColor: `${colors.primary}18` }]}>
-            <MaterialCommunityIcons name="shape-outline" size={14} color={colors.primaryDark} />
-            <Text variant="labelSmall" style={{ color: colors.primaryDark, fontWeight: '600' }}>
-              Category
-            </Text>
-          </View>
-        ) : null}
-        <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
-          {screenTitle}
-        </Text>
-        {categoryId ? (
-          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
+        <View style={styles.heroText}>
+          <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '800' }}>
+            {screenTitle}
+          </Text>
+          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 2 }}>
             {providers.length} provider{providers.length === 1 ? '' : 's'} available
           </Text>
-        ) : null}
+        </View>
       </View>
 
-      <View style={styles.toolbar}>
+      <View style={[styles.controlsCard, { backgroundColor: colors.surface, ...shadows.md }]}>
         <SearchBar
           placeholder={`Search ${categoryTitle?.toLowerCase() ?? 'providers'}...`}
           value={query}
           onChangeText={setQuery}
-          containerStyle={{ flex: 1 }}
+          dense
         />
+        <View style={styles.filterRow}>
+          <FilterChip label="Filter" icon="tune-variant" onPress={() => setFilterOpen(true)} />
+          <FilterChip
+            label={SORT_OPTIONS.find((o) => o.id === sortId)?.label ?? 'Sort'}
+            icon="sort"
+            onPress={() => setSortOpen(true)}
+          />
+          <FilterChip
+            label={layout === 'list' ? 'Grid' : 'List'}
+            icon={layout === 'list' ? 'view-grid-outline' : 'view-list-outline'}
+            onPress={() => setLayout(layout === 'list' ? 'compact' : 'list')}
+          />
+        </View>
       </View>
+    </LinearGradient>
+  );
 
-      <View style={styles.filters}>
-        <FilterChip label="Filter" icon="tune-variant" onPress={() => setFilterOpen(true)} />
-        <FilterChip
-          label={SORT_OPTIONS.find((o) => o.id === sortId)?.label ?? 'Sort'}
-          icon="sort"
-          onPress={() => setSortOpen(true)}
-        />
-        <FilterChip
-          label={layout === 'list' ? 'Compact' : 'List'}
-          icon={layout === 'list' ? 'view-grid-outline' : 'view-list-outline'}
-          onPress={() => setLayout(layout === 'list' ? 'compact' : 'list')}
-        />
-      </View>
-
+  return (
+    <CustomerScreen scroll={false} bottomPadding={0} fixedHeader={header}>
       {providers.length === 0 ? (
         <EmptyState
           icon="account-search"
@@ -137,6 +130,7 @@ export function ProviderListingScreen({ navigation, route }: Props) {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           columnWrapperStyle={layout === 'compact' ? styles.gridRow : undefined}
+          style={styles.listFlex}
           renderItem={({ item }) => (
             <View style={layout === 'compact' ? styles.gridItem : styles.listItem}>
               <ProviderCard
@@ -204,10 +198,10 @@ function FilterChip({
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: colors.surface, borderColor: colors.border }]}
+      style={[styles.chip, { backgroundColor: colors.sectionTint, borderColor: colors.borderLight }]}
     >
-      <MaterialCommunityIcons name={icon} size={16} color={colors.primaryDark} />
-      <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '600' }}>
+      <MaterialCommunityIcons name={icon} size={15} color={colors.primaryDark} />
+      <Text variant="labelSmall" style={{ color: colors.textPrimary, fontWeight: '700' }} numberOfLines={1}>
         {label}
       </Text>
     </Pressable>
@@ -215,57 +209,59 @@ function FilterChip({
 }
 
 const styles = StyleSheet.create({
-  topBar: {
-    paddingHorizontal: 20,
-    paddingBottom: 8,
+  hero: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 16,
+    gap: 14,
+  },
+  heroTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  heroText: {
+    flex: 1,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    borderWidth: 1,
+    width: 42,
+    height: 42,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    gap: 6,
+  controlsCard: {
+    borderRadius: 18,
+    padding: 12,
+    gap: 10,
   },
-  categoryBadge: {
-    alignSelf: 'flex-start',
+  filterRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  toolbar: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-  },
-  filters: {
-    flexDirection: 'row',
+    alignItems: 'stretch',
     gap: 8,
-    paddingHorizontal: 20,
-    marginBottom: 12,
   },
   chip: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
+    justifyContent: 'center',
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 11,
+    borderRadius: 12,
     borderWidth: 1,
+    minHeight: 44,
+  },
+  listFlex: {
+    flex: 1,
   },
   list: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 24,
     gap: 10,
   },
-  listItem: { marginBottom: 14 },
-  gridRow: { gap: 12 },
-  gridItem: { flex: 1, marginBottom: 12 },
+  listItem: { marginBottom: 12 },
+  gridRow: { gap: 10, paddingHorizontal: 0 },
+  gridItem: { flex: 1, marginBottom: 10 },
 });

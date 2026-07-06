@@ -27,6 +27,21 @@ export function CustomerScreen({
   const { colors } = theme.tokens;
 
   if (fixedHeader) {
+    const body = scroll ? (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        bounces
+        contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding }, contentStyle]}
+        style={styles.flex}
+      >
+        {children}
+      </ScrollView>
+    ) : (
+      <View style={[styles.fill, contentStyle]}>{children}</View>
+    );
+
     return (
       <View style={[styles.safe, { backgroundColor: colors.background }, style]}>
         <SafeAreaView
@@ -35,16 +50,7 @@ export function CustomerScreen({
         >
           {fixedHeader}
         </SafeAreaView>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentInsetAdjustmentBehavior="never"
-          automaticallyAdjustContentInsets={false}
-          bounces
-          contentContainerStyle={[styles.scroll, { paddingBottom: bottomPadding }, contentStyle]}
-          style={styles.flex}
-        >
-          {children}
-        </ScrollView>
+        {body}
       </View>
     );
   }
