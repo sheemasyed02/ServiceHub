@@ -7,18 +7,20 @@ export type ProviderSectionHeaderProps = {
   title: string;
   actionLabel?: string;
   onAction?: () => void;
+  style?: import('react-native').ViewStyle;
 };
 
 export function ProviderSectionHeader({
   title,
   actionLabel,
   onAction,
+  style,
 }: ProviderSectionHeaderProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, style]}>
       <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '600' }}>
         {title}
       </Text>
@@ -39,6 +41,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 8,
+    marginTop: 20,
+    gap: 12,
   },
 });

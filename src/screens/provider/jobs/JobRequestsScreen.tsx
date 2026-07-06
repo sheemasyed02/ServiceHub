@@ -1,11 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { JobRequestCard } from '@/components/provider';
-import { NoJobsEmptyState } from '@/components/ui/empty-states';
+import { InsetGroup } from '@/components/customer';
+import { JobRequestCard, ProviderScreen } from '@/components/provider';
+import { EmptyState } from '@/components/ui';
 import { SkeletonList } from '@/components/ui/skeleton';
 import { useAppDispatch, useAppTheme, useCurrentProviderProfile, useProviderPendingRequests } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
@@ -16,7 +16,6 @@ type Props = NativeStackScreenProps<ProviderJobsStackParamList, 'JobRequests'>;
 export function JobRequestsScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const provider = useCurrentProviderProfile();
   const pendingRequests = useProviderPendingRequests();
@@ -28,47 +27,53 @@ export function JobRequestsScreen({ navigation }: Props) {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <Text variant="headlineSmall" style={{ color: colors.textPrimary }}>
+    <ProviderScreen bottomPadding={88}>
+      <View style={styles.header}>
+        <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
           Job Requests
         </Text>
-        <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
+        <Text variant="bodyMedium" style={{ color: colors.textSecondary, marginTop: 4 }}>
           {provider
-            ? `Showing requests for ${provider.name} only`
-            : 'Accept or decline customer bookings assigned to you'}
+            ? `${pendingRequests.length} pending for ${provider.profession}`
+            : 'Accept or decline customer bookings'}
         </Text>
       </View>
 
       {loading ? (
         <SkeletonList count={3} />
       ) : pendingRequests.length === 0 ? (
-        <NoJobsEmptyState style={{ flex: 1 }} />
+        <EmptyState
+          icon="briefcase-off-outline"
+          title="No pending requests"
+          description="New booking requests for your services will show up here."
+        />
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120, paddingTop: 8 }}
-        >
-          {pendingRequests.map((req) => (
-            <View key={req.id} style={{ marginBottom: 10 }}>
-              <JobRequestCard
-                request={req}
-                onAccept={() => {
-                  dispatch(acceptBooking(req.id));
-                  navigation.navigate('ActiveJob', { jobId: req.id });
-                }}
-                onReject={() => dispatch(rejectBooking(req.id))}
-                onPress={() => navigation.navigate('ActiveJob', { jobId: req.id })}
-              />
-            </View>
+        <InsetGroup>
+          {pendingRequests.map((req, index) => (
+            <JobRequestCard
+              key={req.id}
+              request={req}
+              showDivider={index < pendingRequests.length - 1}
+              onAccept={() => {
+                dispatch(acceptBooking(req.id));
+                navigation.navigate('ActiveJob', { jobId: req.id });
+              }}
+              onReject={() => dispatch(rejectBooking(req.id))}
+              onPress={() => navigation.navigate('ActiveJob', { jobId: req.id })}
+            />
           ))}
-        </ScrollView>
+        </InsetGroup>
       )}
-    </View>
+
+      <View style={{ height: 24 }} />
+    </ProviderScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { paddingHorizontal: 20, paddingBottom: 16 },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
 });

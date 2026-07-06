@@ -1,10 +1,10 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { InsetGroup } from '@/components/customer';
 import {
   DashboardHeader,
   JobRequestCard,
@@ -13,15 +13,17 @@ import {
   QuickActionGrid,
   StatCard,
 } from '@/components/provider';
-import { MOCK_EARNINGS, MOCK_PROVIDER_NOTIFICATIONS } from '@/constants/provider';
+import { EmptyState } from '@/components/ui';
+import { MOCK_PROVIDER_NOTIFICATIONS } from '@/constants/provider';
 import {
   useAppDispatch,
   useAppTheme,
   useCurrentProviderProfile,
+  useProviderEarnings,
   useProviderPendingRequests,
 } from '@/hooks';
 import type { ProviderDashboardStackParamList } from '@/navigation/types/provider.types';
-import { acceptBooking, rejectBooking } from '@/store';
+import { acceptBooking, rejectBooking, setProviderOnline } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderDashboardStackParamList, 'DashboardMain'>;
 
@@ -32,7 +34,7 @@ export function ProviderDashboardScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const provider = useCurrentProviderProfile();
   const pendingRequests = useProviderPendingRequests();
-  const [isOnline, setIsOnline] = useState(provider?.isOnline ?? true);
+  const earnings = useProviderEarnings();
   const unread = MOCK_PROVIDER_NOTIFICATIONS.filter((n) => !n.read).length;
 
   if (!provider) {
@@ -43,49 +45,49 @@ export function ProviderDashboardScreen({ navigation }: Props) {
     );
   }
 
-  return (
-    <ProviderScreen edges={[]} bottomPadding={120}>
-      <LinearGradient
-        colors={gradients.hero}
-        style={[styles.hero, { paddingTop: insets.top + 8 }]}
-      >
-        <DashboardHeader
-          name={provider.name}
-          avatar={provider.avatar}
-          isOnline={isOnline}
-          onToggleOnline={setIsOnline}
-          unreadCount={unread}
-          onNotifications={() => navigation.navigate('Notifications')}
-        />
-      </LinearGradient>
+  const header = (
+    <LinearGradient
+      colors={gradients.hero}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={[styles.hero, { paddingTop: insets.top + 8 }]}
+    >
+      <DashboardHeader
+        name={provider.name}
+        avatar={provider.avatar}
+        isOnline={provider.isOnline}
+        onToggleOnline={(value) => dispatch(setProviderOnline(value))}
+        unreadCount={unread}
+        onNotifications={() => navigation.navigate('Notifications')}
+        onProfilePress={() => navigation.navigate('ProfileFlow')}
+      />
+    </LinearGradient>
+  );
 
+  return (
+    <ProviderScreen fixedHeader={header} bottomPadding={88}>
       <View style={styles.stats}>
         <StatCard
-          label="Today's Earnings"
-          value={`₹${MOCK_EARNINGS.today}`}
+          label="Earned"
+          value={`₹${earnings.today}`}
           icon="cash"
           accent={colors.success}
         />
         <StatCard
-          label="Pending Requests"
+          label="Pending"
           value={String(pendingRequests.length)}
           icon="clock-alert-outline"
           accent={colors.warning}
         />
-        <StatCard
-          label="Customer Rating"
-          value={`${provider.rating} ★`}
-          icon="star"
-          accent={colors.primary}
-        />
-        <StatCard label="Profession" value={provider.profession} icon="briefcase-outline" />
+        <StatCard label="Rating" value={`${provider.rating} ★`} icon="star" accent={colors.primary} />
+        <StatCard label="Jobs done" value={String(earnings.completedCount)} icon="briefcase-outline" />
       </View>
 
-      <ProviderSectionHeader title="Quick actions" />
+      <ProviderSectionHeader title="Shortcuts" style={styles.firstSection} />
       <QuickActionGrid
         actions={[
           {
-            label: 'View Jobs',
+            label: 'Jobs',
             icon: 'briefcase-outline',
             onPress: () => navigation.getParent()?.navigate('Jobs'),
           },
@@ -96,32 +98,34 @@ export function ProviderDashboardScreen({ navigation }: Props) {
             onPress: () => navigation.getParent()?.navigate('Calendar'),
           },
           {
-            label: 'Documents',
-            icon: 'file-document-outline',
-            onPress: () => navigation.navigate('Documents'),
+            label: 'Messages',
+            icon: 'message-text-outline',
+            onPress: () => navigation.getParent()?.navigate('Chat'),
           },
         ]}
       />
 
-      <View style={styles.spacer} />
       <ProviderSectionHeader
-        title="Your booking requests"
-        actionLabel="View all"
+        title="New requests"
+        actionLabel="See all"
         onAction={() => navigation.getParent()?.navigate('Jobs')}
       />
 
       {pendingRequests.length === 0 ? (
-        <Text
-          variant="bodyMedium"
-          style={{ color: colors.textSecondary, textAlign: 'center', padding: 20 }}
-        >
-          No pending requests for {provider.profession} bookings right now.
-        </Text>
+        <View style={{ paddingHorizontal: 20 }}>
+          <EmptyState
+            icon="briefcase-check-outline"
+            title="No new requests"
+            description={`You're all caught up for ${provider.profession} bookings.`}
+          />
+        </View>
       ) : (
-        pendingRequests.slice(0, 2).map((req) => (
-          <View key={req.id} style={{ marginBottom: 10 }}>
+        <InsetGroup>
+          {pendingRequests.slice(0, 3).map((req, index) => (
             <JobRequestCard
+              key={req.id}
               request={req}
+              showDivider={index < Math.min(pendingRequests.length, 3) - 1}
               onAccept={() => {
                 dispatch(acceptBooking(req.id));
                 navigation
@@ -129,23 +133,30 @@ export function ProviderDashboardScreen({ navigation }: Props) {
                   ?.navigate('Jobs', { screen: 'ActiveJob', params: { jobId: req.id } });
               }}
               onReject={() => dispatch(rejectBooking(req.id))}
+              onPress={() =>
+                navigation.getParent()?.navigate('Jobs', {
+                  screen: 'ActiveJob',
+                  params: { jobId: req.id },
+                })
+              }
             />
-          </View>
-        ))
+          ))}
+        </InsetGroup>
       )}
+
       <View style={{ height: 24 }} />
     </ProviderScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { paddingBottom: 16 },
+  hero: { paddingBottom: 14 },
   stats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    paddingHorizontal: 20,
-    marginTop: 8,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
   },
-  spacer: { height: 24 },
+  firstSection: { marginTop: 8 },
 });

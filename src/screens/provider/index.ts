@@ -15,3 +15,5 @@ export { AddServiceScreen } from './services/AddServiceScreen';
 export { ProviderNotificationsScreen } from './notifications/ProviderNotificationsScreen';
 export { ProviderHelpSupportScreen } from './support/ProviderHelpSupportScreen';
 export { ProviderSettingsScreen } from './settings/ProviderSettingsScreen';
+export { ProviderChatListScreen } from './chat/ProviderChatListScreen';
+export { ProviderChatConversationScreen } from './chat/ProviderChatConversationScreen';

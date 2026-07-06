@@ -11,6 +11,7 @@ export type DashboardHeaderProps = {
   isOnline: boolean;
   onToggleOnline: (value: boolean) => void;
   onNotifications: () => void;
+  onProfilePress: () => void;
   unreadCount?: number;
 };
 
@@ -20,6 +21,7 @@ export function DashboardHeader({
   isOnline,
   onToggleOnline,
   onNotifications,
+  onProfilePress,
   unreadCount = 0,
 }: DashboardHeaderProps) {
   const theme = useAppTheme();
@@ -31,33 +33,30 @@ export function DashboardHeader({
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-        <Avatar source={{ uri: avatar }} name={name} size="lg" />
         <View style={{ flex: 1 }}>
           <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
             {greeting}
           </Text>
-          <Text variant="headlineSmall" style={{ color: colors.textPrimary }}>
-            {firstName}
+          <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+            Hi, {firstName}
           </Text>
         </View>
-        <Pressable
-          onPress={onNotifications}
-          style={[styles.bellBtn, { borderColor: colors.border }]}
-        >
-          <MaterialCommunityIcons name="bell-outline" size={22} color={colors.textPrimary} />
+        <Pressable onPress={onNotifications} hitSlop={8} style={styles.bellBtn}>
+          <MaterialCommunityIcons name="bell-outline" size={24} color={colors.textPrimary} />
           {unreadCount > 0 ? (
             <View style={[styles.badge, { backgroundColor: colors.error }]}>
-              <Text variant="labelSmall" style={{ color: colors.white, fontSize: 10 }}>
+              <Text variant="labelSmall" style={{ color: colors.white, fontSize: 10, fontWeight: '700' }}>
                 {unreadCount}
               </Text>
             </View>
           ) : null}
         </Pressable>
+        <Pressable onPress={onProfilePress} hitSlop={8}>
+          <Avatar source={{ uri: avatar }} name={name} size="md" />
+        </Pressable>
       </View>
 
-      <View
-        style={[styles.onlineRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      >
+      <View style={styles.onlineRow}>
         <View style={styles.onlineLeft}>
           <View
             style={[
@@ -65,11 +64,8 @@ export function DashboardHeader({
               { backgroundColor: isOnline ? colors.success : colors.textTertiary },
             ]}
           />
-          <Text variant="labelLarge" style={{ color: colors.textPrimary }}>
-            {isOnline ? 'Online' : 'Offline'}
-          </Text>
-          <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
-            {isOnline ? 'Accepting jobs' : 'Not accepting jobs'}
+          <Text variant="bodyMedium" style={{ color: colors.textPrimary, fontWeight: '500' }}>
+            {isOnline ? 'Online — accepting jobs' : 'Offline'}
           </Text>
         </View>
         <Switch
@@ -84,20 +80,18 @@ export function DashboardHeader({
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingHorizontal: 20, gap: 14 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  wrap: { paddingHorizontal: 16, gap: 14 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   bellBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    borderWidth: 1,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
-    top: 6,
-    right: 6,
+    top: 4,
+    right: 4,
     minWidth: 16,
     height: 16,
     borderRadius: 8,
@@ -109,9 +103,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
   },
   onlineLeft: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 },
   statusDot: { width: 8, height: 8, borderRadius: 4 },

@@ -1,4 +1,3 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
@@ -10,11 +9,25 @@ export type ChatThreadRowProps = {
   thread: ChatThread;
   onPress: () => void;
   showDivider?: boolean;
+  /** Whose name/avatar to show in the row. */
+  perspective?: 'customer' | 'provider';
 };
 
-export function ChatThreadRow({ thread, onPress, showDivider = false }: ChatThreadRowProps) {
+export function ChatThreadRow({
+  thread,
+  onPress,
+  showDivider = false,
+  perspective = 'customer',
+}: ChatThreadRowProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+
+  const displayName =
+    perspective === 'provider'
+      ? (thread.customerName ?? 'Customer')
+      : thread.providerName;
+  const avatarUri =
+    perspective === 'provider' ? thread.customerAvatar : thread.providerAvatar;
 
   return (
     <Pressable
@@ -27,11 +40,11 @@ export function ChatThreadRow({ thread, onPress, showDivider = false }: ChatThre
         },
       ]}
     >
-      <Avatar source={thread.providerAvatar ? { uri: thread.providerAvatar } : undefined} name={thread.providerName} size="md" />
+      <Avatar source={avatarUri ? { uri: avatarUri } : undefined} name={displayName} size="md" />
       <View style={styles.body}>
         <View style={styles.top}>
           <Text variant="bodyLarge" numberOfLines={1} style={{ color: colors.textPrimary, flex: 1, fontWeight: '600' }}>
-            {thread.providerName}
+            {displayName}
           </Text>
           <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
             {thread.lastMessageAt}

@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { customerStackScreenOptions } from '@/navigation/config';
+import { ProviderProfileStack } from '@/navigation/stacks/ProviderProfileStack';
 import type { ProviderDashboardStackParamList } from '@/navigation/types/provider.types';
 import {
   ProviderDashboardScreen,
@@ -51,6 +52,11 @@ export function ProviderDashboardStack() {
         name="Documents"
         component={ProviderDocumentsScreen}
         options={{ title: 'Documents' }}
+      />
+      <Stack.Screen
+        name="ProfileFlow"
+        component={ProviderProfileStack}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

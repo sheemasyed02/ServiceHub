@@ -14,20 +14,15 @@ export type StatCardProps = {
 export function StatCard({ label, value, icon, accent }: StatCardProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const tint = accent ?? colors.primary;
+  const tint = accent ?? colors.primaryDark;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <View style={[styles.iconWrap, { backgroundColor: `${tint}14` }]}>
-        <MaterialCommunityIcons name={icon} size={20} color={tint} />
-      </View>
-      <Text variant="labelSmall" style={{ color: colors.textSecondary, marginTop: 10 }}>
+    <View style={styles.card}>
+      <MaterialCommunityIcons name={icon} size={18} color={tint} />
+      <Text variant="labelSmall" style={{ color: colors.textTertiary, marginTop: 6 }}>
         {label}
       </Text>
-      <Text
-        variant="titleMedium"
-        style={{ color: colors.textPrimary, fontWeight: '700', marginTop: 2 }}
-      >
+      <Text variant="titleSmall" style={{ color: colors.textPrimary, fontWeight: '700', marginTop: 2 }}>
         {value}
       </Text>
     </View>
@@ -37,15 +32,7 @@ export function StatCard({ label, value, icon, accent }: StatCardProps) {
 const styles = StyleSheet.create({
   card: {
     width: '47%',
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  iconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
   },
 });

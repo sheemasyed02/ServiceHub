@@ -8,6 +8,12 @@ export type ProviderDashboardStackParamList = {
   HelpSupport: undefined;
   Settings: undefined;
   Documents: undefined;
+  ProfileFlow: NavigatorScreenParams<ProviderProfileStackParamList> | undefined;
+};
+
+export type ProviderChatStackParamList = {
+  ChatList: undefined;
+  ChatConversation: { threadId: string };
 };
 
 export type ProviderJobsStackParamList = {
@@ -36,5 +42,5 @@ export type ProviderTabParamList = {
   Dashboard: NavigatorScreenParams<ProviderDashboardStackParamList> | undefined;
   Jobs: NavigatorScreenParams<ProviderJobsStackParamList> | undefined;
   Calendar: NavigatorScreenParams<ProviderCalendarStackParamList> | undefined;
-  Profile: NavigatorScreenParams<ProviderProfileStackParamList> | undefined;
+  Chat: NavigatorScreenParams<ProviderChatStackParamList> | undefined;
 };

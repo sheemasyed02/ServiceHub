@@ -6,9 +6,12 @@ import {
   selectCustomerBookings,
   selectCustomerBookingsByStatus,
   selectProviderActiveBookings,
+  selectProviderChatUnread,
+  selectProviderEarnings,
   selectProviderJobById,
   selectProviderJobRequests,
   selectProviderPendingBookings,
+  selectProviderThreads,
 } from '@/store/selectors';
 import type { ProviderUser } from '@/types/provider';
 
@@ -54,6 +57,7 @@ export function useProviderJob(jobId: string) {
 
 export function useCurrentProviderProfile(): ProviderUser | null {
   const providerId = useAppSelector((state) => state.auth.providerId);
+  const isOnline = useAppSelector((state) => state.provider.isOnline);
   const catalog = providerId ? getProviderById(providerId) : undefined;
   if (!catalog || !providerId) return null;
 
@@ -77,6 +81,29 @@ export function useCurrentProviderProfile(): ProviderUser | null {
     workingHours: catalog.workingHours,
     serviceAreas: ['Koramangala', 'HSR Layout', 'Indiranagar'],
     verified: catalog.verified,
-    isOnline: true,
+    isOnline,
   };
+}
+
+export function useProviderEarnings() {
+  const providerId = useAppSelector((state) => state.auth.providerId);
+  return useAppSelector((state) =>
+    providerId
+      ? selectProviderEarnings(state, providerId)
+      : { today: 0, weekly: 0, monthly: 0, total: 0, completedCount: 0, activeCount: 0 },
+  );
+}
+
+export function useProviderChatThreads() {
+  const providerId = useAppSelector((state) => state.auth.providerId);
+  return useAppSelector((state) =>
+    providerId ? selectProviderThreads(state, providerId) : [],
+  );
+}
+
+export function useProviderChatUnread() {
+  const providerId = useAppSelector((state) => state.auth.providerId);
+  return useAppSelector((state) =>
+    providerId ? selectProviderChatUnread(state, providerId) : 0,
+  );
 }

@@ -1,12 +1,12 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { ChatConversationLayout } from '@/components/chat/ChatConversationLayout';
-import type { ChatStackParamList } from '@/navigation/types/customer.types';
+import type { ProviderChatStackParamList } from '@/navigation/types/provider.types';
 
-type Props = NativeStackScreenProps<ChatStackParamList, 'ChatConversation'>;
+type Props = NativeStackScreenProps<ProviderChatStackParamList, 'ChatConversation'>;
 
-export function ChatConversationScreen({ route, navigation }: Props) {
+export function ProviderChatConversationScreen({ route, navigation }: Props) {
   const { threadId } = route.params;
 
   const hideTabBar = useCallback(() => {
@@ -27,7 +27,7 @@ export function ChatConversationScreen({ route, navigation }: Props) {
   return (
     <ChatConversationLayout
       threadId={threadId}
-      role="customer"
+      role="provider"
       onSetHeaderTitle={onSetHeaderTitle}
       hideTabBar={hideTabBar}
       showTabBar={showTabBar}

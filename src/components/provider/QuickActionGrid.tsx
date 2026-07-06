@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { useAppTheme } from '@/hooks';
@@ -19,44 +19,38 @@ export function QuickActionGrid({ actions }: QuickActionGridProps) {
   const { colors } = theme.tokens;
 
   return (
-    <View style={styles.grid}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.content}
+    >
       {actions.map((action) => (
-        <Pressable
-          key={action.label}
-          onPress={action.onPress}
-          style={[styles.item, { backgroundColor: colors.surface, borderColor: colors.border }]}
-        >
-          <View style={[styles.iconWrap, { backgroundColor: `${colors.primary}12` }]}>
+        <Pressable key={action.label} onPress={action.onPress} style={styles.item}>
+          <View style={[styles.iconWrap, { backgroundColor: colors.surface }]}>
             <MaterialCommunityIcons name={action.icon} size={22} color={colors.primaryDark} />
           </View>
-          <Text variant="labelMedium" style={{ color: colors.textPrimary, marginTop: 8 }}>
+          <Text variant="labelSmall" style={{ color: colors.textPrimary, marginTop: 8, textAlign: 'center' }}>
             {action.label}
           </Text>
         </Pressable>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    paddingHorizontal: 20,
+  content: {
+    paddingHorizontal: 16,
+    gap: 16,
   },
   item: {
-    width: '47%',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    borderWidth: 1,
+    width: 72,
     alignItems: 'center',
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
   },

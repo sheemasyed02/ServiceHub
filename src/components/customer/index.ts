@@ -7,6 +7,11 @@ export type { ReviewCardProps } from './ReviewCard';
 export { ChatThreadRow } from './ChatThreadRow';
 export type { ChatThreadRowProps } from './ChatThreadRow';
 
+export { BookingListItem } from './BookingListItem';
+export type { BookingListItemProps } from './BookingListItem';
+
+export { MessageTicks } from './MessageTicks';
+
 export { BookingCard } from './BookingCard';
 export type { BookingCardProps } from './BookingCard';
 

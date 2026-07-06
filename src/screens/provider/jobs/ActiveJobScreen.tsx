@@ -3,9 +3,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Linking, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
+import { InsetGroup } from '@/components/customer';
 import { ProviderScreen } from '@/components/provider';
 import { Avatar, PrimaryButton, SecondaryButton } from '@/components/ui';
-import { useAppDispatch, useAppTheme, useProviderJob } from '@/hooks';
+import { useAppDispatch, useAppSelector, useAppTheme, useProviderJob } from '@/hooks';
 import type { ProviderJobsStackParamList } from '@/navigation/types/provider.types';
 import { acceptBooking } from '@/store';
 
@@ -16,6 +17,9 @@ export function ActiveJobScreen({ navigation, route }: Props) {
   const { colors } = theme.tokens;
   const dispatch = useAppDispatch();
   const job = useProviderJob(route.params.jobId);
+  const chatThread = useAppSelector((state) =>
+    state.chats.threads.find((t) => t.bookingId === job?.bookingId),
+  );
 
   if (!job) {
     return (
@@ -27,37 +31,45 @@ export function ActiveJobScreen({ navigation, route }: Props) {
     );
   }
 
+  const openChat = () => {
+    if (!chatThread) return;
+    navigation.getParent()?.navigate('Chat', {
+      screen: 'ChatConversation',
+      params: { threadId: chatThread.id },
+    });
+  };
+
   return (
     <ProviderScreen bottomPadding={40}>
-      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
-          Booking ID
+      <View style={styles.header}>
+        <Text variant="headlineSmall" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+          Job details
         </Text>
-        <Text variant="titleMedium" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+        <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
           {job.bookingId}
         </Text>
       </View>
 
-      <Section title="Customer">
-        <View style={[styles.row, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Avatar source={{ uri: job.customerAvatar }} name={job.customerName} size="lg" />
+      <InsetGroup style={styles.group}>
+        <View style={styles.customerRow}>
+          <Avatar source={{ uri: job.customerAvatar }} name={job.customerName} size="md" />
           <View style={{ flex: 1 }}>
-            <Text variant="titleSmall" style={{ color: colors.textPrimary }}>
+            <Text variant="bodyLarge" style={{ color: colors.textPrimary, fontWeight: '600' }}>
               {job.customerName}
             </Text>
             <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
               {job.customerPhone}
             </Text>
           </View>
+          <Text variant="titleMedium" style={{ color: colors.textPrimary, fontWeight: '700' }}>
+            ₹{job.estimatedEarnings}
+          </Text>
         </View>
-      </Section>
-
-      <Section title="Service details">
+        <View style={[styles.divider, { backgroundColor: colors.divider }]} />
         <InfoRow icon="wrench-outline" label="Service" value={job.service} />
         <InfoRow icon="map-marker-outline" label="Address" value={job.address} />
-        <InfoRow icon="clock-outline" label="Scheduled" value={job.scheduledAt} />
-        <InfoRow icon="cash" label="Estimated earnings" value={`₹${job.estimatedEarnings}`} />
-      </Section>
+        <InfoRow icon="clock-outline" label="Scheduled" value={job.scheduledAt} last />
+      </InsetGroup>
 
       <View style={styles.actions}>
         <SecondaryButton
@@ -75,8 +87,9 @@ export function ActiveJobScreen({ navigation, route }: Props) {
         <SecondaryButton
           label="Chat"
           icon={<MaterialCommunityIcons name="message-text" size={18} color={colors.primaryDark} />}
-          onPress={() => {}}
+          onPress={openChat}
           style={{ flex: 1 }}
+          disabled={!chatThread}
         />
       </View>
 
@@ -92,38 +105,23 @@ export function ActiveJobScreen({ navigation, route }: Props) {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  const theme = useAppTheme();
-  const { colors } = theme.tokens;
-
-  return (
-    <View style={styles.section}>
-      <Text
-        variant="titleSmall"
-        style={{ color: colors.textPrimary, fontWeight: '600', marginBottom: 10 }}
-      >
-        {title}
-      </Text>
-      {children}
-    </View>
-  );
-}
-
 function InfoRow({
   icon,
   label,
   value,
+  last,
 }: {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   label: string;
   value: string;
+  last?: boolean;
 }) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <View style={[styles.infoRow, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <MaterialCommunityIcons name={icon} size={20} color={colors.primaryDark} />
+    <View style={[styles.infoRow, !last && { marginBottom: 0 }]}>
+      <MaterialCommunityIcons name={icon} size={18} color={colors.textTertiary} />
       <View style={{ flex: 1 }}>
         <Text variant="labelSmall" style={{ color: colors.textTertiary }}>
           {label}
@@ -137,28 +135,21 @@ function InfoRow({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 20,
-    padding: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginBottom: 20,
-  },
-  section: { paddingHorizontal: 20, marginBottom: 20 },
-  row: {
+  header: { paddingHorizontal: 20, paddingTop: 8, marginBottom: 16 },
+  group: { marginBottom: 16 },
+  customerRow: {
     flexDirection: 'row',
-    gap: 14,
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
+  divider: { height: StyleSheet.hairlineWidth, marginHorizontal: 16 },
   infoRow: {
     flexDirection: 'row',
     gap: 12,
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   actions: {
     flexDirection: 'row',

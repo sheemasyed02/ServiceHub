@@ -23,6 +23,7 @@ export type {
   ProviderJobsStackParamList,
   ProviderCalendarStackParamList,
   ProviderProfileStackParamList,
+  ProviderChatStackParamList,
 } from './provider.types';
 
 declare global {

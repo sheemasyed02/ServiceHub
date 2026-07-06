@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { createSeedMessages, createSeedThreads } from '@/constants/shared/seedChats';
-import type { ChatMessage, ChatThread } from '@/types/chat';
+import type { ChatMessage, ChatThread, MessageStatus } from '@/types/chat';
 
 type ChatsState = {
   threads: ChatThread[];
@@ -19,18 +19,25 @@ const chatsSlice = createSlice({
   reducers: {
     sendMessage: (
       state,
-      action: PayloadAction<{ threadId: string; text: string; sender?: 'customer' | 'provider' }>,
+      action: PayloadAction<{
+        id?: string;
+        threadId: string;
+        text: string;
+        sender?: 'customer' | 'provider';
+      }>,
     ) => {
       const { threadId, text, sender = 'customer' } = action.payload;
+      const id = action.payload.id ?? `m-${Date.now()}`;
       const now = new Date();
       const sentAt = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
       state.messages.push({
-        id: `m-${Date.now()}`,
+        id,
         threadId,
         text,
         sentAt,
         sender,
+        status: sender === 'customer' || sender === 'provider' ? 'sent' : undefined,
       });
 
       const thread = state.threads.find((t) => t.id === threadId);
@@ -42,6 +49,15 @@ const chatsSlice = createSlice({
         }
       }
     },
+    updateMessageStatus: (
+      state,
+      action: PayloadAction<{ messageId: string; status: MessageStatus }>,
+    ) => {
+      const message = state.messages.find((m) => m.id === action.payload.messageId);
+      if (message) {
+        message.status = action.payload.status;
+      }
+    },
     markThreadRead: (state, action: PayloadAction<string>) => {
       const thread = state.threads.find((t) => t.id === action.payload);
       if (thread) thread.unreadCount = 0;
@@ -49,5 +65,5 @@ const chatsSlice = createSlice({
   },
 });
 
-export const { sendMessage, markThreadRead } = chatsSlice.actions;
+export const { sendMessage, updateMessageStatus, markThreadRead } = chatsSlice.actions;
 export const chatsReducer = chatsSlice.reducer;

@@ -4,6 +4,7 @@ import { authReducer } from './authSlice';
 import { bookingsReducer } from './bookingsSlice';
 import { chatsReducer } from './chatsSlice';
 import { customerReducer } from './customerSlice';
+import { providerReducer } from './providerSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     bookings: bookingsReducer,
     chats: chatsReducer,
     customer: customerReducer,
+    provider: providerReducer,
   },
 });
 
@@ -30,4 +32,5 @@ export {
   completeBooking,
   cancelBooking,
 } from './bookingsSlice';
-export { sendMessage, markThreadRead } from './chatsSlice';
+export { sendMessage, markThreadRead, updateMessageStatus } from './chatsSlice';
+export { setProviderOnline } from './providerSlice';

@@ -1,9 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { RectButton, Swipeable } from 'react-native-gesture-handler';
 
-import { Avatar, PrimaryButton, SecondaryButton } from '@/components/ui';
+import { Avatar } from '@/components/ui';
 import { useAppTheme } from '@/hooks';
 import type { JobRequest } from '@/types/provider';
 
@@ -12,80 +11,68 @@ export type JobRequestCardProps = {
   onAccept: () => void;
   onReject: () => void;
   onPress?: () => void;
+  showDivider?: boolean;
 };
 
-export function JobRequestCard({ request, onAccept, onReject, onPress }: JobRequestCardProps) {
+export function JobRequestCard({
+  request,
+  onAccept,
+  onReject,
+  onPress,
+  showDivider = false,
+}: JobRequestCardProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
-  const renderRightActions = (
-    _progress: Animated.AnimatedInterpolation<number>,
-    dragX: Animated.AnimatedInterpolation<number>,
-  ) => {
-    const trans = dragX.interpolate({
-      inputRange: [-160, 0],
-      outputRange: [0, 160],
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <Animated.View style={[styles.swipeActions, { transform: [{ translateX: trans }] }]}>
-        <RectButton
-          style={[styles.swipeBtn, { backgroundColor: colors.success }]}
-          onPress={onAccept}
-        >
-          <MaterialCommunityIcons name="check" size={22} color={colors.white} />
-          <Text variant="labelSmall" style={{ color: colors.white }}>
-            Accept
-          </Text>
-        </RectButton>
-        <RectButton style={[styles.swipeBtn, { backgroundColor: colors.error }]} onPress={onReject}>
-          <MaterialCommunityIcons name="close" size={22} color={colors.white} />
-          <Text variant="labelSmall" style={{ color: colors.white }}>
-            Reject
-          </Text>
-        </RectButton>
-      </Animated.View>
-    );
-  };
-
   return (
-    <Swipeable renderRightActions={renderRightActions} overshootRight={false}>
-      <Pressable
-        onPress={onPress}
-        style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      >
-        <View style={styles.topRow}>
-          <Avatar source={{ uri: request.customerAvatar }} name={request.customerName} size="md" />
-          <View style={{ flex: 1 }}>
-            <Text variant="titleSmall" style={{ color: colors.textPrimary }}>
-              {request.customerName}
-            </Text>
-            <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
-              {request.service}
-            </Text>
-          </View>
-          <Text variant="labelLarge" style={{ color: colors.primaryDark, fontWeight: '700' }}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.row,
+        showDivider && {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.divider,
+        },
+      ]}
+    >
+      <Avatar source={{ uri: request.customerAvatar }} name={request.customerName} size="md" />
+      <View style={styles.body}>
+        <View style={styles.top}>
+          <Text variant="bodyLarge" numberOfLines={1} style={{ color: colors.textPrimary, flex: 1, fontWeight: '600' }}>
+            {request.service}
+          </Text>
+          <Text variant="labelLarge" style={{ color: colors.textPrimary, fontWeight: '700' }}>
             ₹{request.estimatedEarnings}
           </Text>
         </View>
-
-        <View style={styles.metaRow}>
-          <MetaChip icon="map-marker-outline" label={request.distance} />
-          <MetaChip icon="clock-outline" label={request.duration} />
-          <MetaChip icon="calendar-clock" label={request.scheduledAt} />
+        <Text variant="bodySmall" style={{ color: colors.textSecondary }}>
+          {request.customerName}
+        </Text>
+        <View style={styles.meta}>
+          <Meta icon="map-marker-outline" label={request.distance} />
+          <Meta icon="clock-outline" label={request.duration} />
+          <Meta icon="calendar-clock" label={request.scheduledAt} />
         </View>
-
         <View style={styles.actions}>
-          <SecondaryButton label="Reject" onPress={onReject} size="sm" style={{ flex: 1 }} />
-          <PrimaryButton label="Accept" onPress={onAccept} size="sm" style={{ flex: 1 }} />
+          <Pressable onPress={onReject} hitSlop={8} style={styles.actionBtn}>
+            <Text variant="labelLarge" style={{ color: colors.textSecondary }}>Decline</Text>
+          </Pressable>
+          <Pressable
+            onPress={onAccept}
+            hitSlop={8}
+            style={[styles.acceptBtn, { backgroundColor: colors.primary }]}
+          >
+            <Text variant="labelLarge" style={{ color: colors.onPrimary, fontWeight: '600' }}>
+              Accept
+            </Text>
+          </Pressable>
         </View>
-      </Pressable>
-    </Swipeable>
+      </View>
+    </Pressable>
   );
 }
 
-function MetaChip({
+function Meta({
   icon,
   label,
 }: {
@@ -96,9 +83,9 @@ function MetaChip({
   const { colors } = theme.tokens;
 
   return (
-    <View style={styles.chip}>
-      <MaterialCommunityIcons name={icon} size={14} color={colors.textTertiary} />
-      <Text variant="labelSmall" style={{ color: colors.textSecondary }} numberOfLines={1}>
+    <View style={styles.metaItem}>
+      <MaterialCommunityIcons name={icon} size={13} color={colors.textTertiary} />
+      <Text variant="labelSmall" style={{ color: colors.textTertiary }} numberOfLines={1}>
         {label}
       </Text>
     </View>
@@ -106,28 +93,27 @@ function MetaChip({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 20,
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
+  row: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    flexDirection: 'row',
     gap: 12,
   },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  chip: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  actions: { flexDirection: 'row', gap: 10 },
-  swipeActions: {
+  body: { flex: 1, gap: 4 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  meta: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 },
+  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  actions: {
     flexDirection: 'row',
-    width: 160,
-    marginRight: 20,
-  },
-  swipeBtn: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    borderRadius: 14,
-    marginLeft: 4,
+    justifyContent: 'flex-end',
+    gap: 12,
+    marginTop: 10,
+  },
+  actionBtn: { paddingVertical: 6, paddingHorizontal: 4 },
+  acceptBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
 });

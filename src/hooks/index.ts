@@ -3,6 +3,7 @@ export { useAppSelector } from './useAppSelector';
 export { useAppTheme } from './useAppTheme';
 export { useCustomerUser } from './useCustomerUser';
 export { useUserLocation } from './useUserLocation';
+export { useKeyboardHeight } from './useKeyboardHeight';
 export {
   useAuth,
   useBooking,
@@ -10,6 +11,9 @@ export {
   useCustomerBookingsByStatus,
   useCurrentProviderProfile,
   useProviderActiveBookings,
+  useProviderChatThreads,
+  useProviderChatUnread,
+  useProviderEarnings,
   useProviderJob,
   useProviderPendingBookings,
   useProviderPendingRequests,

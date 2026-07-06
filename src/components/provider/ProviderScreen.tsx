@@ -18,7 +18,7 @@ export function ProviderScreen({
   scroll = true,
   style,
   contentStyle,
-  bottomPadding = 100,
+  bottomPadding = 88,
   edges = ['top', 'left', 'right'],
   fixedHeader,
 }: ProviderScreenProps) {
