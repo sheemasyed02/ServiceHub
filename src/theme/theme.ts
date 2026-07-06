@@ -2,6 +2,7 @@ import { Platform, type ViewStyle } from 'react-native';
 import { MD3LightTheme, type MD3Theme } from 'react-native-paper';
 
 import { colors } from './colors';
+import { gradients } from './gradients';
 import { borderRadius, layout, spacing } from './spacing';
 import { paperFonts, typography } from './typography';
 
@@ -44,11 +45,11 @@ const createShadow = (
 /** Layered elevation system — subtle depth without heavy drop shadows. */
 export const shadows = {
   none: createShadow(0, 0, 0, 0),
-  xs: createShadow(1, 1, 0.04, 2),
-  sm: createShadow(2, 2, 0.06, 6),
-  md: createShadow(4, 4, 0.08, 12),
-  lg: createShadow(8, 8, 0.1, 20),
-  xl: createShadow(12, 12, 0.12, 28),
+  xs: createShadow(1, 1, 0.05, 3),
+  sm: createShadow(2, 2, 0.07, 6),
+  md: createShadow(4, 3, 0.09, 10),
+  lg: createShadow(6, 6, 0.11, 16),
+  xl: createShadow(10, 8, 0.13, 22),
 } as const;
 
 /** MD3 surface tints for Paper elevation levels. */
@@ -179,6 +180,7 @@ export type AppCardStyles = typeof cardStyles;
 /** Extended theme tokens bundled alongside the Paper theme. */
 export const themeTokens = {
   colors,
+  gradients,
   spacing,
   borderRadius,
   layout,

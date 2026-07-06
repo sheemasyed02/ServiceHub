@@ -18,7 +18,7 @@ export function ProfileMenuItem({ icon, label, value, danger, onPress }: Profile
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.row, pressed && { opacity: 0.7 }]}>
-      <View style={[styles.iconWrap, { backgroundColor: `${colors.primary}12` }]}>
+      <View style={[styles.iconWrap, { backgroundColor: colors.primaryContainer }]}>
         <MaterialCommunityIcons
           name={icon}
           size={20}

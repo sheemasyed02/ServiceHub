@@ -29,7 +29,7 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
       style={[
         styles.bar,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.surfaceElevated,
           borderTopColor: colors.border,
           paddingBottom: Math.max(insets.bottom, 10),
         },
@@ -54,7 +54,7 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
               }
             }}
           >
-            <View style={[styles.iconPill, focused && { backgroundColor: `${colors.primary}18` }]}>
+            <View style={[styles.iconPill, focused && { backgroundColor: colors.primaryContainer }]}>
               <MaterialCommunityIcons
                 name={focused ? config.iconFocused : config.icon}
                 size={22}

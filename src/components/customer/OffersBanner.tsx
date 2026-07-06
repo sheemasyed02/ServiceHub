@@ -14,7 +14,7 @@ export type OffersBannerProps = {
 
 export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerProps) {
   const theme = useAppTheme();
-  const { colors, shadows } = theme.tokens;
+  const { colors, gradients, shadows } = theme.tokens;
 
   return (
     <Pressable onPress={onPress} style={[styles.wrap, shadows.md]}>
@@ -24,7 +24,7 @@ export function OffersBanner({ title, subtitle, code, onPress }: OffersBannerPro
         imageStyle={styles.bannerImage}
       >
         <LinearGradient
-          colors={['rgba(196, 160, 32, 0.85)', 'rgba(17, 24, 39, 0.75)']}
+          colors={gradients.offer}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.overlay}

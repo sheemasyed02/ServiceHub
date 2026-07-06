@@ -1,6 +1,9 @@
 export { colors } from './colors';
 export type { AppColors, ColorToken } from './colors';
 
+export { gradients } from './gradients';
+export type { AppGradients } from './gradients';
+
 export { spacing, borderRadius, layout } from './spacing';
 export type { AppSpacing, AppBorderRadius, AppLayout } from './spacing';
 

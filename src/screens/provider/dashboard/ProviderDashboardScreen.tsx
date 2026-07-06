@@ -27,7 +27,7 @@ type Props = NativeStackScreenProps<ProviderDashboardStackParamList, 'DashboardM
 
 export function ProviderDashboardScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors } = theme.tokens;
+  const { colors, gradients } = theme.tokens;
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const provider = useCurrentProviderProfile();
@@ -46,7 +46,7 @@ export function ProviderDashboardScreen({ navigation }: Props) {
   return (
     <ProviderScreen edges={[]} bottomPadding={120}>
       <LinearGradient
-        colors={['#FFFBEB', colors.background]}
+        colors={gradients.hero}
         style={[styles.hero, { paddingTop: insets.top + 8 }]}
       >
         <DashboardHeader

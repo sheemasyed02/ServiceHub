@@ -4,9 +4,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FilterSheet, SortSheet } from '@/components/bottom-sheets';
-import { CustomerScreen, ProviderCard } from '@/components/customer';
+import { ProviderCard } from '@/components/customer';
 import { EmptyState, SearchBar } from '@/components/ui';
 import { FILTER_OPTIONS, getProvidersByCategory, SORT_OPTIONS } from '@/constants/customer';
 import { useAppTheme } from '@/hooks';
@@ -18,7 +19,7 @@ type LayoutMode = 'list' | 'compact';
 
 export function ProviderListingScreen({ navigation, route }: Props) {
   const theme = useAppTheme();
-  const { colors, shadows } = theme.tokens;
+  const { colors, gradients, shadows } = theme.tokens;
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortKey>('rating');
   const [sortId, setSortId] = useState('rating');
@@ -61,7 +62,7 @@ export function ProviderListingScreen({ navigation, route }: Props) {
   const screenTitle = categoryTitle ? categoryTitle : categoryId ? 'Providers' : 'All Providers';
 
   const header = (
-    <LinearGradient colors={['#FFF4D6', '#E8EBF2']} style={styles.hero}>
+    <LinearGradient colors={gradients.hero} style={styles.hero}>
       <View style={styles.heroTop}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -105,58 +106,63 @@ export function ProviderListingScreen({ navigation, route }: Props) {
   );
 
   return (
-    <CustomerScreen scroll={false} bottomPadding={0} fixedHeader={header}>
-      {providers.length === 0 ? (
-        <EmptyState
-          icon="account-search"
-          title={categoryTitle ? `No ${categoryTitle} providers` : 'No providers found'}
-          description={
-            categoryId
-              ? 'No providers in this category yet. Try another category.'
-              : 'Try adjusting filters or search.'
-          }
-          actionLabel={categoryId ? 'Browse all' : undefined}
-          onAction={
-            categoryId
-              ? () => navigation.setParams({ categoryId: undefined, categoryTitle: undefined })
-              : undefined
-          }
-        />
-      ) : (
-        <FlatList
-          data={providers}
-          key={layout}
-          numColumns={layout === 'compact' ? 2 : 1}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          columnWrapperStyle={layout === 'compact' ? styles.gridRow : undefined}
-          style={styles.listFlex}
-          renderItem={({ item }) => (
-            <View style={layout === 'compact' ? styles.gridItem : styles.listItem}>
-              <ProviderCard
-                provider={item}
-                layout={layout}
-                onPress={() => navigation.navigate('ProviderProfile', { providerId: item.id })}
-                onBook={() => navigation.navigate('Booking', { providerId: item.id })}
-              />
-            </View>
-          )}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.4}
-          ListFooterComponent={
-            loading ? (
-              <ActivityIndicator color={colors.primary} style={{ marginVertical: 20 }} />
-            ) : (
-              <Text
-                variant="bodySmall"
-                style={{ textAlign: 'center', color: colors.textTertiary, marginVertical: 16 }}
-              >
-                Page {page}
-              </Text>
-            )
-          }
-        />
-      )}
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView edges={['top', 'left', 'right']}>{header}</SafeAreaView>
+
+      <FlatList
+        data={providers}
+        key={layout}
+        numColumns={layout === 'compact' ? 2 : 1}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={[
+          styles.list,
+          providers.length === 0 && styles.listEmpty,
+        ]}
+        columnWrapperStyle={layout === 'compact' ? styles.gridRow : undefined}
+        style={styles.listFlex}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <EmptyState
+            icon="account-search"
+            title={categoryTitle ? `No ${categoryTitle} providers` : 'No providers found'}
+            description={
+              categoryId
+                ? 'No providers in this category yet. Try another category.'
+                : 'Try adjusting filters or search.'
+            }
+            actionLabel={categoryId ? 'Browse all' : undefined}
+            onAction={
+              categoryId
+                ? () => navigation.setParams({ categoryId: undefined, categoryTitle: undefined })
+                : undefined
+            }
+          />
+        }
+        renderItem={({ item }) => (
+          <View style={layout === 'compact' ? styles.gridItem : styles.listItem}>
+            <ProviderCard
+              provider={item}
+              layout={layout}
+              onPress={() => navigation.navigate('ProviderProfile', { providerId: item.id })}
+              onBook={() => navigation.navigate('Booking', { providerId: item.id })}
+            />
+          </View>
+        )}
+        onEndReached={providers.length > 0 ? loadMore : undefined}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          providers.length === 0 ? null : loading ? (
+            <ActivityIndicator color={colors.primary} style={{ marginVertical: 20 }} />
+          ) : (
+            <Text
+              variant="bodySmall"
+              style={{ textAlign: 'center', color: colors.textTertiary, marginVertical: 16 }}
+            >
+              Page {page}
+            </Text>
+          )
+        }
+      />
 
       <FilterSheet
         visible={filterOpen}
@@ -179,7 +185,7 @@ export function ProviderListingScreen({ navigation, route }: Props) {
         }}
         onApply={() => undefined}
       />
-    </CustomerScreen>
+    </View>
   );
 }
 
@@ -198,7 +204,7 @@ function FilterChip({
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: colors.sectionTint, borderColor: colors.borderLight }]}
+      style={[styles.chip, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}
     >
       <MaterialCommunityIcons name={icon} size={15} color={colors.primaryDark} />
       <Text variant="labelSmall" style={{ color: colors.textPrimary, fontWeight: '700' }} numberOfLines={1}>
@@ -209,6 +215,9 @@ function FilterChip({
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   hero: {
     paddingHorizontal: 16,
     paddingTop: 4,
@@ -260,6 +269,9 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 24,
     gap: 10,
+  },
+  listEmpty: {
+    flexGrow: 1,
   },
   listItem: { marginBottom: 12 },
   gridRow: { gap: 10, paddingHorizontal: 0 },

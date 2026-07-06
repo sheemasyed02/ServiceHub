@@ -25,7 +25,7 @@ export function BookingCard({ booking, onViewDetails, onCancel, onTrack }: Booki
   const { colors, shadows } = theme.tokens;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface }, shadows.md]}>
+    <View style={[styles.card, { backgroundColor: colors.surfaceElevated }, shadows.md]}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text variant="bodyLarge" style={{ fontWeight: '600', color: colors.textPrimary }}>

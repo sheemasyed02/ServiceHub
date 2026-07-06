@@ -24,7 +24,7 @@ const MENU_ITEMS: { label: string; icon: IconName; screen: keyof ProviderProfile
 
 export function ProviderProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors, shadows } = theme.tokens;
+  const { colors, gradients, shadows } = theme.tokens;
   const user = useCurrentProviderProfile();
 
   if (!user) {
@@ -36,8 +36,8 @@ export function ProviderProfileScreen({ navigation }: Props) {
   }
 
   const header = (
-    <LinearGradient colors={['#FFF4D6', '#E8EBF2']} style={styles.hero}>
-      <View style={[styles.profileCard, { backgroundColor: colors.surface, ...shadows.md }]}>
+    <LinearGradient colors={gradients.hero} style={styles.hero}>
+      <View style={[styles.profileCard, { backgroundColor: colors.surfaceElevated, ...shadows.md }]}>
         <Avatar source={{ uri: user.avatar }} name={user.name} size="xl" />
         <View style={styles.nameRow}>
           <Text variant="titleLarge" style={{ color: colors.textPrimary, fontWeight: '800' }}>
@@ -68,7 +68,7 @@ export function ProviderProfileScreen({ navigation }: Props) {
 
   return (
     <ProviderScreen fixedHeader={header} bottomPadding={120} contentStyle={styles.body}>
-      <View style={[styles.infoCard, { backgroundColor: colors.surface, ...shadows.sm }]}>
+      <View style={[styles.infoCard, { backgroundColor: colors.surfaceElevated, ...shadows.sm }]}>
         <InfoSection title="Languages" items={user.languages} />
         <InfoSection title="Skills" items={user.skills} />
         <InfoSection title="Certificates" items={user.certificates} />
@@ -76,7 +76,7 @@ export function ProviderProfileScreen({ navigation }: Props) {
         <InfoBlock title="Service areas" value={user.serviceAreas.join(', ')} last />
       </View>
 
-      <View style={[styles.menu, { backgroundColor: colors.surface, ...shadows.sm }]}>
+      <View style={[styles.menu, { backgroundColor: colors.surfaceElevated, ...shadows.sm }]}>
         {MENU_ITEMS.map((item, index) => (
           <Pressable
             key={item.label}
@@ -114,7 +114,7 @@ function InfoSection({ title, items }: { title: string; items: string[] }) {
       </Text>
       <View style={styles.chips}>
         {items.map((item) => (
-          <View key={item} style={[styles.chip, { backgroundColor: colors.sectionTint }]}>
+          <View key={item} style={[styles.chip, { backgroundColor: colors.surfaceVariant }]}>
             <Text variant="labelMedium" style={{ color: colors.textPrimary, fontWeight: '600' }}>
               {item}
             </Text>

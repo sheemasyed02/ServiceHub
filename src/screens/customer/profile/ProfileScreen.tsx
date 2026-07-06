@@ -18,18 +18,18 @@ type Props = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
 
 export function ProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
-  const { colors, shadows } = theme.tokens;
+  const { colors, gradients, shadows } = theme.tokens;
   const dispatch = useAppDispatch();
   const user = useCustomerUser();
 
   const header = (
     <LinearGradient
-      colors={['#FFF4D6', '#E8EBF2']}
+      colors={gradients.hero}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.hero}
     >
-      <View style={[styles.profileCard, { backgroundColor: colors.surface, ...shadows.md }]}>
+      <View style={[styles.profileCard, { backgroundColor: colors.surfaceElevated, ...shadows.md }]}>
         <Avatar source={{ uri: MOCK_IMAGES.userAvatar }} name={user.name} size="xl" />
         <View style={styles.profileInfo}>
           <Text variant="titleLarge" style={{ fontWeight: '700', color: colors.textPrimary }}>
@@ -72,7 +72,7 @@ export function ProfileScreen({ navigation }: Props) {
 
   return (
     <CustomerScreen fixedHeader={header} contentStyle={styles.body}>
-      <View style={[styles.menu, { backgroundColor: colors.surface, borderColor: colors.border, ...shadows.sm }]}>
+      <View style={[styles.menu, { backgroundColor: colors.surfaceElevated, borderColor: colors.border, ...shadows.sm }]}>
         <ProfileMenuItem
           icon="account-edit-outline"
           label="Edit Profile"

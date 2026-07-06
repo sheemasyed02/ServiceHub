@@ -5,19 +5,6 @@ import { Text } from 'react-native-paper';
 import { useAppTheme } from '@/hooks';
 import type { CustomerCategory } from '@/types/customer';
 
-const CATEGORY_TINTS: Record<string, string> = {
-  plumber: '#EFF6FF',
-  electrician: '#FEF9C3',
-  carpenter: '#FFF7ED',
-  painter: '#FCE7F3',
-  cleaner: '#ECFDF5',
-  'ac-repair': '#E0F2FE',
-  appliance: '#F3E8FF',
-  gardening: '#DCFCE7',
-  pest: '#FEE2E2',
-  salon: '#FDF2F8',
-};
-
 export type CategoryCardProps = {
   category: CustomerCategory;
   selected?: boolean;
@@ -27,7 +14,6 @@ export type CategoryCardProps = {
 export function CategoryCard({ category, selected = false, onPress }: CategoryCardProps) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
-  const tint = CATEGORY_TINTS[category.id] ?? colors.surfaceVariant;
 
   return (
     <Pressable
@@ -35,12 +21,20 @@ export function CategoryCard({ category, selected = false, onPress }: CategoryCa
       style={[
         styles.card,
         {
-          backgroundColor: selected ? `${colors.primary}16` : colors.surface,
+          backgroundColor: selected ? colors.primaryContainer : colors.surfaceElevated,
+          borderColor: selected ? colors.primary : colors.borderLight,
         },
         shadows.sm,
       ]}
     >
-      <View style={[styles.iconWrap, { backgroundColor: tint }]}>
+      <View
+        style={[
+          styles.iconWrap,
+          {
+            backgroundColor: selected ? `${colors.primary}22` : colors.surfaceVariant,
+          },
+        ]}
+      >
         <MaterialCommunityIcons
           name={category.icon as keyof typeof MaterialCommunityIcons.glyphMap}
           size={22}
@@ -50,7 +44,12 @@ export function CategoryCard({ category, selected = false, onPress }: CategoryCa
       <Text
         variant="labelSmall"
         numberOfLines={2}
-        style={{ color: colors.textPrimary, textAlign: 'center', lineHeight: 16 }}
+        style={{
+          color: colors.textPrimary,
+          textAlign: 'center',
+          lineHeight: 16,
+          fontWeight: '600',
+        }}
       >
         {category.title}
       </Text>
@@ -64,6 +63,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 8,
     borderRadius: 18,
+    borderWidth: 1,
     alignItems: 'center',
     gap: 10,
   },

@@ -8,7 +8,7 @@ export type SectionPanelProps = {
   noPadding?: boolean;
 };
 
-/** Elevated app-style section container — avoids flat website-like rows. */
+/** Elevated section container on the app background. */
 export function SectionPanel({ children, style, noPadding = false }: SectionPanelProps) {
   const theme = useAppTheme();
   const { colors, shadows } = theme.tokens;
@@ -18,9 +18,9 @@ export function SectionPanel({ children, style, noPadding = false }: SectionPane
       style={[
         styles.panel,
         {
-          backgroundColor: colors.surface,
-          borderColor: colors.borderLight,
-          ...shadows.sm,
+          backgroundColor: colors.surfaceElevated,
+          borderColor: colors.border,
+          ...shadows.md,
         },
         noPadding ? styles.noPad : null,
         style,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   panel: {
     marginHorizontal: 16,
     marginBottom: 20,
-    borderRadius: 20,
+    borderRadius: 18,
     borderWidth: 1,
     padding: 16,
     overflow: 'hidden',

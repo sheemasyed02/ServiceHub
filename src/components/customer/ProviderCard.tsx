@@ -35,7 +35,7 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
         <Animated.View
           style={[
             styles.compact,
-            { transform: [{ scale }], backgroundColor: colors.surface },
+            { transform: [{ scale }], backgroundColor: colors.surfaceElevated },
             shadows.md,
           ]}
         >
@@ -72,7 +72,7 @@ export function ProviderCard({ provider, layout = 'list', onPress, onBook }: Pro
       <Animated.View
         style={[
           styles.card,
-          { transform: [{ scale }], backgroundColor: colors.surface },
+          { transform: [{ scale }], backgroundColor: colors.surfaceElevated },
           shadows.md,
         ]}
       >

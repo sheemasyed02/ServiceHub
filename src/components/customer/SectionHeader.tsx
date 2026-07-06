@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { useAppTheme } from '@/hooks';
@@ -9,6 +9,7 @@ export type SectionHeaderProps = {
   actionLabel?: string;
   onAction?: () => void;
   inset?: boolean;
+  style?: ViewStyle;
 };
 
 export function SectionHeader({
@@ -17,18 +18,19 @@ export function SectionHeader({
   actionLabel,
   onAction,
   inset = false,
+  style,
 }: SectionHeaderProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
 
   return (
-    <View style={[styles.row, inset && styles.inset]}>
+    <View style={[styles.row, inset && styles.inset, style]}>
       <View style={styles.titleWrap}>
         <Text variant="titleMedium" style={{ color: colors.textPrimary, fontWeight: '800' }}>
           {title}
         </Text>
         {subtitle ? (
-          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 2 }}>
+          <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 3 }}>
             {subtitle}
           </Text>
         ) : null}
@@ -37,7 +39,7 @@ export function SectionHeader({
         <Pressable
           onPress={onAction}
           hitSlop={8}
-          style={[styles.actionBtn, { backgroundColor: `${colors.primary}14` }]}
+          style={[styles.actionBtn, { backgroundColor: colors.primaryContainer }]}
         >
           <Text variant="labelMedium" style={{ color: colors.primaryDark, fontWeight: '700' }}>
             {actionLabel}
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     marginBottom: 14,
     gap: 12,
   },
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 999,
+    paddingVertical: 8,
+    borderRadius: 10,
   },
 });
