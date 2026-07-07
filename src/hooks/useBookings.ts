@@ -7,6 +7,8 @@ import {
   selectCustomerBookingsByStatus,
   selectProviderActiveBookings,
   selectProviderChatUnread,
+  selectProviderBookings,
+  selectProviderCompletedBookings,
   selectProviderEarnings,
   selectProviderJobById,
   selectProviderJobRequests,
@@ -83,6 +85,18 @@ export function useCurrentProviderProfile(): ProviderUser | null {
     verified: catalog.verified,
     isOnline,
   };
+}
+
+export function useProviderBookings() {
+  const providerId = useAppSelector((state) => state.auth.providerId);
+  if (!providerId) return [];
+  return useAppSelector((state) => selectProviderBookings(state, providerId));
+}
+
+export function useProviderCompletedBookings() {
+  const providerId = useAppSelector((state) => state.auth.providerId);
+  if (!providerId) return [];
+  return useAppSelector((state) => selectProviderCompletedBookings(state, providerId));
 }
 
 export function useProviderEarnings() {

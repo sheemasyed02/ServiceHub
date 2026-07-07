@@ -1,103 +1,132 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
+import { InsetGroup, NotificationCard, SectionHeader } from '@/components/customer';
 import { ProviderScreen } from '@/components/provider';
-import { NoNotificationsEmptyState } from '@/components/ui/empty-states';
-import { MOCK_PROVIDER_NOTIFICATIONS } from '@/constants/provider';
-import { useAppTheme } from '@/hooks';
+import { EmptyState } from '@/components/ui';
+import {
+  useAppTheme,
+  useProviderChatThreads,
+  useProviderPendingBookings,
+} from '@/hooks';
 import type { ProviderDashboardStackParamList } from '@/navigation/types/provider.types';
 import type { ProviderNotification } from '@/types/provider';
 
-type Props = NativeStackScreenProps<ProviderDashboardStackParamList, 'Notifications'>;
+type NotificationItem = ProviderNotification & { section: 'today' | 'earlier' };
 
-const TYPE_ICONS = {
-  booking: 'calendar-plus',
-  payment: 'cash-check',
-  verification: 'shield-check-outline',
-  announcement: 'bullhorn-outline',
-} as const;
+type Props = NativeStackScreenProps<ProviderDashboardStackParamList, 'Notifications'>;
 
 export function ProviderNotificationsScreen(_props: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
-  const [items, setItems] = useState<ProviderNotification[]>(MOCK_PROVIDER_NOTIFICATIONS);
+  const pendingBookings = useProviderPendingBookings();
+  const chatThreads = useProviderChatThreads();
+  const [dismissed, setDismissed] = useState<string[]>([]);
+  const [readIds, setReadIds] = useState<string[]>([]);
 
-  if (items.length === 0) {
+  const generated = useMemo(() => {
+    const items: NotificationItem[] = [
+      ...pendingBookings.map((b) => ({
+        id: `booking-${b.id}`,
+        type: 'booking' as const,
+        title: 'New booking request',
+        message: `${b.customerName} requested ${b.service} on ${b.date}`,
+        time: 'Just now',
+        read: false,
+        section: 'today' as const,
+      })),
+      ...chatThreads
+        .filter((t) => t.unreadCount > 0)
+        .map((t) => ({
+          id: `chat-${t.id}`,
+          type: 'announcement' as const,
+          title: 'Unread message',
+          message: `${t.customerName ?? 'Customer'}: ${t.lastMessage}`,
+          time: t.lastMessageAt,
+          read: false,
+          section: 'today' as const,
+        })),
+    ];
+    return items;
+  }, [pendingBookings, chatThreads]);
+
+  const notifications = generated
+    .filter((n) => !dismissed.includes(n.id))
+    .map((n) => ({ ...n, read: readIds.includes(n.id) || n.read }));
+
+  const sections = [
+    { key: 'today' as const, title: 'Today' },
+    { key: 'earlier' as const, title: 'Earlier' },
+  ];
+
+  if (notifications.length === 0) {
     return (
-      <ProviderScreen scroll={false}>
-        <NoNotificationsEmptyState style={{ flex: 1 }} />
+      <ProviderScreen>
+        <Text
+          variant="headlineSmall"
+          style={{
+            fontWeight: '700',
+            color: colors.textPrimary,
+            paddingHorizontal: 20,
+            marginBottom: 16,
+          }}
+        >
+          Notifications
+        </Text>
+        <EmptyState
+          icon="bell-off-outline"
+          title="All caught up"
+          description="You have no new notifications right now."
+        />
       </ProviderScreen>
     );
   }
 
   return (
     <ProviderScreen bottomPadding={40}>
-      {items.map((item) => (
-        <View
-          key={item.id}
-          style={[
-            styles.card,
-            {
-              backgroundColor: item.read ? colors.surface : `${colors.primary}08`,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <View style={[styles.iconWrap, { backgroundColor: `${colors.primary}14` }]}>
-            <MaterialCommunityIcons
-              name={TYPE_ICONS[item.type]}
-              size={20}
-              color={colors.primaryDark}
-            />
+      <Text
+        variant="headlineSmall"
+        style={{
+          fontWeight: '700',
+          color: colors.textPrimary,
+          paddingHorizontal: 20,
+          marginBottom: 16,
+        }}
+      >
+        Notifications
+      </Text>
+
+      {sections.map(({ key, title }) => {
+        const items = notifications.filter((n) => n.section === key);
+        if (items.length === 0) return null;
+
+        return (
+          <View key={key} style={styles.section}>
+            <SectionHeader title={title} style={styles.sectionHeader} />
+            <InsetGroup>
+              {items.map((n, index) => (
+                <NotificationCard
+                  key={n.id}
+                  title={n.title}
+                  message={n.message}
+                  time={n.time}
+                  read={n.read}
+                  showDivider={index < items.length - 1}
+                  onPress={() => setReadIds((prev) => [...prev, n.id])}
+                  onDelete={() => setDismissed((prev) => [...prev, n.id])}
+                />
+              ))}
+            </InsetGroup>
           </View>
-          <View style={{ flex: 1 }}>
-            <View style={styles.titleRow}>
-              <Text variant="titleSmall" style={{ color: colors.textPrimary, flex: 1 }}>
-                {item.title}
-              </Text>
-              {!item.read ? (
-                <View style={[styles.unread, { backgroundColor: colors.primary }]} />
-              ) : null}
-            </View>
-            <Text variant="bodySmall" style={{ color: colors.textSecondary, marginTop: 4 }}>
-              {item.message}
-            </Text>
-            <Text variant="labelSmall" style={{ color: colors.textTertiary, marginTop: 6 }}>
-              {item.time}
-            </Text>
-          </View>
-          <Pressable
-            onPress={() => setItems((prev) => prev.filter((n) => n.id !== item.id))}
-            hitSlop={8}
-          >
-            <MaterialCommunityIcons name="delete-outline" size={20} color={colors.textTertiary} />
-          </Pressable>
-        </View>
-      ))}
+        );
+      })}
     </ProviderScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    gap: 12,
-    marginHorizontal: 20,
-    marginBottom: 10,
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  unread: { width: 8, height: 8, borderRadius: 4 },
+  section: { marginBottom: 12 },
+  sectionHeader: { marginTop: 8 },
 });

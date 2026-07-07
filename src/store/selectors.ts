@@ -1,6 +1,12 @@
 import type { RootState } from '@/store';
 import type { Booking } from '@/types/customer';
-import { bookingToJobRequest } from '@/utils/bookingHelpers';
+import {
+  bookingToJobRequest,
+  isSameCalendarDay,
+  isSameCalendarMonth,
+  isWithinPastDays,
+  parseBookingDate,
+} from '@/utils/bookingHelpers';
 
 export function selectAllBookings(state: RootState): Booking[] {
   return state.bookings.items;
@@ -64,10 +70,19 @@ export function selectProviderEarnings(state: RootState, providerId: string) {
       b.providerStatus === 'accepted' && (b.status === 'upcoming' || b.status === 'ongoing'),
   );
 
-  const total = completed.reduce((sum, b) => sum + b.price, 0);
-  const today = completed.reduce((sum, b) => sum + b.price, 0);
-  const weekly = total;
-  const monthly = total;
+  const now = new Date();
+  const sumPrices = (items: Booking[]) => items.reduce((sum, b) => sum + b.price, 0);
+
+  const completedOn = (predicate: (date: Date) => boolean) =>
+    completed.filter((b) => {
+      const date = parseBookingDate(b.date);
+      return date ? predicate(date) : false;
+    });
+
+  const total = sumPrices(completed);
+  const today = sumPrices(completedOn((date) => isSameCalendarDay(date, now)));
+  const weekly = sumPrices(completedOn((date) => isWithinPastDays(date, 7, now)));
+  const monthly = sumPrices(completedOn((date) => isSameCalendarMonth(date, now)));
 
   return {
     today,

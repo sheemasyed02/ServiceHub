@@ -4,21 +4,20 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { InsetGroup } from '@/components/customer';
+import { InsetGroup, SectionHeader } from '@/components/customer';
 import {
   DashboardHeader,
   JobRequestCard,
   ProviderScreen,
-  ProviderSectionHeader,
   QuickActionGrid,
   StatCard,
 } from '@/components/provider';
 import { EmptyState } from '@/components/ui';
-import { MOCK_PROVIDER_NOTIFICATIONS } from '@/constants/provider';
 import {
   useAppDispatch,
   useAppTheme,
   useCurrentProviderProfile,
+  useProviderChatUnread,
   useProviderEarnings,
   useProviderPendingRequests,
 } from '@/hooks';
@@ -35,7 +34,7 @@ export function ProviderDashboardScreen({ navigation }: Props) {
   const provider = useCurrentProviderProfile();
   const pendingRequests = useProviderPendingRequests();
   const earnings = useProviderEarnings();
-  const unread = MOCK_PROVIDER_NOTIFICATIONS.filter((n) => !n.read).length;
+  const unread = useProviderChatUnread() + pendingRequests.length;
 
   if (!provider) {
     return (
@@ -66,24 +65,44 @@ export function ProviderDashboardScreen({ navigation }: Props) {
 
   return (
     <ProviderScreen fixedHeader={header} bottomPadding={88}>
-      <View style={styles.stats}>
-        <StatCard
-          label="Earned"
-          value={`₹${earnings.today}`}
-          icon="cash"
-          accent={colors.success}
-        />
-        <StatCard
-          label="Pending"
-          value={String(pendingRequests.length)}
-          icon="clock-alert-outline"
-          accent={colors.warning}
-        />
-        <StatCard label="Rating" value={`${provider.rating} ★`} icon="star" accent={colors.primary} />
-        <StatCard label="Jobs done" value={String(earnings.completedCount)} icon="briefcase-outline" />
-      </View>
+      <InsetGroup style={styles.statsGroup}>
+        <View style={styles.statsRow}>
+          <StatCard
+            label="Today"
+            value={`₹${earnings.today}`}
+            icon="cash"
+            accent={colors.success}
+            compact
+          />
+          <View style={[styles.statsDivider, { backgroundColor: colors.divider }]} />
+          <StatCard
+            label="Pending"
+            value={String(pendingRequests.length)}
+            icon="clock-alert-outline"
+            accent={colors.warning}
+            compact
+          />
+        </View>
+        <View style={[styles.rowDivider, { backgroundColor: colors.divider }]} />
+        <View style={styles.statsRow}>
+          <StatCard
+            label="Rating"
+            value={`${provider.rating} ★`}
+            icon="star"
+            accent={colors.primary}
+            compact
+          />
+          <View style={[styles.statsDivider, { backgroundColor: colors.divider }]} />
+          <StatCard
+            label="Jobs done"
+            value={String(earnings.completedCount)}
+            icon="briefcase-check-outline"
+            compact
+          />
+        </View>
+      </InsetGroup>
 
-      <ProviderSectionHeader title="Shortcuts" style={styles.firstSection} />
+      <SectionHeader title="Shortcuts" style={styles.firstSection} />
       <QuickActionGrid
         actions={[
           {
@@ -105,7 +124,7 @@ export function ProviderDashboardScreen({ navigation }: Props) {
         ]}
       />
 
-      <ProviderSectionHeader
+      <SectionHeader
         title="New requests"
         actionLabel="See all"
         onAction={() => navigation.getParent()?.navigate('Jobs')}
@@ -151,12 +170,9 @@ export function ProviderDashboardScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   hero: { paddingBottom: 14 },
-  stats: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 4,
-  },
+  statsGroup: { marginTop: 12, marginBottom: 4 },
+  statsRow: { flexDirection: 'row' },
+  statsDivider: { width: StyleSheet.hairlineWidth },
+  rowDivider: { height: StyleSheet.hairlineWidth, marginHorizontal: 16 },
   firstSection: { marginTop: 8 },
 });

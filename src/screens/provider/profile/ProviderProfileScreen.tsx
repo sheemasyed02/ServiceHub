@@ -1,13 +1,16 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { InsetGroup, ProfileMenuItem } from '@/components/customer';
 import { ProviderScreen } from '@/components/provider';
-import { Avatar, RatingStars } from '@/components/ui';
-import { useAppTheme, useCurrentProviderProfile } from '@/hooks';
+import { Avatar, RatingStars, SecondaryButton } from '@/components/ui';
+import { useAppDispatch, useAppTheme, useCurrentProviderProfile } from '@/hooks';
+import { navigateToAuth } from '@/navigation/utils';
 import type { ProviderProfileStackParamList } from '@/navigation/types/provider.types';
+import { clearAuth } from '@/services/appStorage';
+import { logout } from '@/store';
 
 type Props = NativeStackScreenProps<ProviderProfileStackParamList, 'ProfileMain'>;
 
@@ -25,6 +28,7 @@ const MENU_ITEMS: { label: string; icon: IconName; screen: keyof ProviderProfile
 export function ProviderProfileScreen({ navigation }: Props) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
+  const dispatch = useAppDispatch();
   const user = useCurrentProviderProfile();
 
   if (!user) {
@@ -85,6 +89,27 @@ export function ProviderProfileScreen({ navigation }: Props) {
           />
         ))}
       </InsetGroup>
+
+      <View style={styles.logoutWrap}>
+        <SecondaryButton
+          label="Logout"
+          variant="outline"
+          onPress={() =>
+            Alert.alert('Logout', 'Are you sure you want to logout?', [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Logout',
+                style: 'destructive',
+                onPress: () => {
+                  dispatch(logout());
+                  clearAuth();
+                  navigateToAuth(navigation);
+                },
+              },
+            ])
+          }
+        />
+      </View>
     </ProviderScreen>
   );
 }
@@ -142,4 +167,5 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
   },
   menu: { marginBottom: 16 },
+  logoutWrap: { paddingHorizontal: 20, marginBottom: 24 },
 });

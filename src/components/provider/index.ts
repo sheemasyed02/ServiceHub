@@ -1,3 +1,4 @@
+export { ProviderJobListItem } from './ProviderJobListItem';
 export { ProviderScreen } from './ProviderScreen';
 export { StatCard } from './StatCard';
 export { QuickActionGrid } from './QuickActionGrid';

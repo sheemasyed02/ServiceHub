@@ -9,15 +9,16 @@ export type StatCardProps = {
   value: string;
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   accent?: string;
+  compact?: boolean;
 };
 
-export function StatCard({ label, value, icon, accent }: StatCardProps) {
+export function StatCard({ label, value, icon, accent, compact }: StatCardProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
   const tint = accent ?? colors.primaryDark;
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, compact && styles.cardCompact]}>
       <MaterialCommunityIcons name={icon} size={18} color={tint} />
       <Text variant="labelSmall" style={{ color: colors.textTertiary, marginTop: 6 }}>
         {label}
@@ -34,5 +35,11 @@ const styles = StyleSheet.create({
     width: '47%',
     paddingVertical: 12,
     paddingHorizontal: 4,
+  },
+  cardCompact: {
+    width: undefined,
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
   },
 });

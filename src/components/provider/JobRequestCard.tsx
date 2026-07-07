@@ -8,10 +8,11 @@ import type { JobRequest } from '@/types/provider';
 
 export type JobRequestCardProps = {
   request: JobRequest;
-  onAccept: () => void;
-  onReject: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
   onPress?: () => void;
   showDivider?: boolean;
+  showActions?: boolean;
 };
 
 export function JobRequestCard({
@@ -20,6 +21,7 @@ export function JobRequestCard({
   onReject,
   onPress,
   showDivider = false,
+  showActions = true,
 }: JobRequestCardProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
@@ -53,20 +55,22 @@ export function JobRequestCard({
           <Meta icon="clock-outline" label={request.duration} />
           <Meta icon="calendar-clock" label={request.scheduledAt} />
         </View>
-        <View style={styles.actions}>
-          <Pressable onPress={onReject} hitSlop={8} style={styles.actionBtn}>
-            <Text variant="labelLarge" style={{ color: colors.textSecondary }}>Decline</Text>
-          </Pressable>
-          <Pressable
-            onPress={onAccept}
-            hitSlop={8}
-            style={[styles.acceptBtn, { backgroundColor: colors.primary }]}
-          >
-            <Text variant="labelLarge" style={{ color: colors.onPrimary, fontWeight: '600' }}>
-              Accept
-            </Text>
-          </Pressable>
-        </View>
+        {showActions && onAccept && onReject ? (
+          <View style={styles.actions}>
+            <Pressable onPress={onReject} hitSlop={8} style={styles.actionBtn}>
+              <Text variant="labelLarge" style={{ color: colors.textSecondary }}>Decline</Text>
+            </Pressable>
+            <Pressable
+              onPress={onAccept}
+              hitSlop={8}
+              style={[styles.acceptBtn, { backgroundColor: colors.primary }]}
+            >
+              <Text variant="labelLarge" style={{ color: colors.onPrimary, fontWeight: '600' }}>
+                Accept
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );
