@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import { ProviderFloatingTabBar } from '@/components/navigation/ProviderFloatingTabBar';
 import { ProviderCalendarStack } from '@/navigation/stacks/ProviderCalendarStack';
@@ -18,7 +19,16 @@ export function ProviderTabs() {
       <Tab.Screen name="Dashboard" component={ProviderDashboardStack} />
       <Tab.Screen name="Jobs" component={ProviderJobsStack} />
       <Tab.Screen name="Calendar" component={ProviderCalendarStack} />
-      <Tab.Screen name="Chat" component={ProviderChatStack} />
+      <Tab.Screen
+        name="Chat"
+        component={ProviderChatStack}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'ChatList';
+          return {
+            tabBarStyle: routeName === 'ChatConversation' ? { display: 'none' } : undefined,
+          };
+        }}
+      />
     </Tab.Navigator>
   );
 }

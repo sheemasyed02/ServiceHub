@@ -25,8 +25,6 @@ export type ChatConversationLayoutProps = {
   title?: string;
   serviceName?: string;
   onSetHeaderTitle?: (title: string) => void;
-  hideTabBar?: () => void;
-  showTabBar?: () => void;
 };
 
 const COMPOSER_HEIGHT = 58;
@@ -37,8 +35,6 @@ export function ChatConversationLayout({
   title,
   serviceName,
   onSetHeaderTitle,
-  hideTabBar,
-  showTabBar,
 }: ChatConversationLayoutProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
@@ -53,15 +49,9 @@ export function ChatConversationLayout({
     state.chats.messages.filter((m) => m.threadId === threadId),
   );
 
-  // WhatsApp-style: pin composer above keyboard (iOS lifts by keyboard height; Android uses window resize).
-  const composerBottom =
-    keyboardHeight > 0
-      ? Platform.OS === 'ios'
-        ? keyboardHeight
-        : 0
-      : Math.max(insets.bottom, 8);
-
-  const listBottomPad = COMPOSER_HEIGHT + composerBottom + 12;
+  const keyboardOpen = keyboardHeight > 0;
+  const composerSafePadding = keyboardOpen ? 8 : Math.max(insets.bottom, 8);
+  const keyboardLift = keyboardOpen ? keyboardHeight : 0;
 
   const scrollToEnd = useCallback(() => {
     requestAnimationFrame(() => {
@@ -82,11 +72,6 @@ export function ChatConversationLayout({
   }, [onSetHeaderTitle, role, thread?.customerName, thread?.providerName, title]);
 
   useEffect(() => {
-    hideTabBar?.();
-    return () => showTabBar?.();
-  }, [hideTabBar, showTabBar]);
-
-  useEffect(() => {
     const showSub = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       scrollToEnd,
@@ -95,10 +80,10 @@ export function ChatConversationLayout({
   }, [scrollToEnd]);
 
   useEffect(() => {
-    if (keyboardHeight > 0) {
+    if (keyboardOpen) {
       scrollToEnd();
     }
-  }, [keyboardHeight, scrollToEnd]);
+  }, [keyboardOpen, scrollToEnd]);
 
   const simulateDelivery = (messageId: string) => {
     setTimeout(() => {
@@ -154,7 +139,12 @@ export function ChatConversationLayout({
   const displayService = serviceName ?? thread?.serviceName;
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        { backgroundColor: colors.background, paddingBottom: keyboardLift },
+      ]}
+    >
       {displayService ? (
         <View
           style={[
@@ -175,7 +165,7 @@ export function ChatConversationLayout({
         keyExtractor={(item) => item.id}
         renderItem={renderMessage}
         style={styles.list}
-        contentContainerStyle={[styles.messages, { paddingBottom: listBottomPad }]}
+        contentContainerStyle={styles.messages}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
@@ -188,8 +178,8 @@ export function ChatConversationLayout({
           {
             backgroundColor: colors.surface,
             borderTopColor: colors.divider,
-            bottom: composerBottom,
-            paddingBottom: keyboardHeight > 0 ? 8 : 0,
+            paddingBottom: composerSafePadding,
+            minHeight: COMPOSER_HEIGHT,
           },
         ]}
       >
@@ -239,6 +229,7 @@ const styles = StyleSheet.create({
   messages: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 8,
     gap: 10,
     flexGrow: 1,
     justifyContent: 'flex-end',
@@ -260,9 +251,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   composerWrap: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 8,

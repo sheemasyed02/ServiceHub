@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import { FloatingTabBar } from '@/components/navigation/FloatingTabBar';
 import { BookingsStack } from '@/navigation/stacks/BookingsStack';
@@ -20,7 +21,16 @@ export function MainTabs() {
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Bookings" component={BookingsStack} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
-      <Tab.Screen name="Chat" component={ChatStack} />
+      <Tab.Screen
+        name="Chat"
+        component={ChatStack}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'ChatList';
+          return {
+            tabBarStyle: routeName === 'ChatConversation' ? { display: 'none' } : undefined,
+          };
+        }}
+      />
     </Tab.Navigator>
   );
 }

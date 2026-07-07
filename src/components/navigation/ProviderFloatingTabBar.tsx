@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -19,10 +19,16 @@ const TAB_CONFIG: Record<
   Chat: { label: 'Chat', icon: 'message-text-outline', iconFocused: 'message-text' },
 };
 
-export function ProviderFloatingTabBar({ state, navigation }: BottomTabBarProps) {
+export function ProviderFloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const theme = useAppTheme();
   const { colors } = theme.tokens;
   const insets = useSafeAreaInsets();
+
+  const focusedRoute = state.routes[state.index];
+  const tabBarStyle = descriptors[focusedRoute.key].options.tabBarStyle as ViewStyle | undefined;
+  if (StyleSheet.flatten(tabBarStyle)?.display === 'none') {
+    return null;
+  }
 
   return (
     <View

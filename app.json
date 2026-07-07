@@ -29,7 +29,7 @@
         "resizeMode": "contain",
         "backgroundColor": "#FFFFFF"
       },
-      "softwareKeyboardLayoutMode": "resize",
+      "softwareKeyboardLayoutMode": "pan",
       "predictiveBackGestureEnabled": false
     },
     "web": {

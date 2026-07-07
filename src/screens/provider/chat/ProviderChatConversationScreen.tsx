@@ -9,14 +9,6 @@ type Props = NativeStackScreenProps<ProviderChatStackParamList, 'ChatConversatio
 export function ProviderChatConversationScreen({ route, navigation }: Props) {
   const { threadId } = route.params;
 
-  const hideTabBar = useCallback(() => {
-    navigation.getParent()?.setOptions({ tabBarStyle: { display: 'none' } });
-  }, [navigation]);
-
-  const showTabBar = useCallback(() => {
-    navigation.getParent()?.setOptions({ tabBarStyle: undefined });
-  }, [navigation]);
-
   const onSetHeaderTitle = useCallback(
     (title: string) => {
       navigation.setOptions({ title });
@@ -29,8 +21,6 @@ export function ProviderChatConversationScreen({ route, navigation }: Props) {
       threadId={threadId}
       role="provider"
       onSetHeaderTitle={onSetHeaderTitle}
-      hideTabBar={hideTabBar}
-      showTabBar={showTabBar}
     />
   );
 }
