@@ -50,3 +50,31 @@ yarn-error.*
 # prettierignore
 .prettierignore
 .prettierrc
+
+# Virtual Environment
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# Testing
+.pytest_cache/
+
+# Coverage
+.coverage
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
