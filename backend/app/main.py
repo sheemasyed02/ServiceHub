@@ -7,12 +7,33 @@ from app.api.router import api_router
 from app.core.settings import settings
 
 
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+
+from app.api.router import api_router
+from app.core.settings import settings
+from app.database.session import engine
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     print(f"Application Name: {settings.app_name}")
     print(f"Version: {settings.app_version}")
     print(f"Environment: {settings.app_env}")
+
+    try:
+        async with engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+        print("Database Connected Successfully")
+    except Exception as exc:
+        print(exc)
+
     yield
+
+    await engine.dispose()
 
 
 def create_application() -> FastAPI:
