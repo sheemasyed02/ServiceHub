@@ -1,6 +1,8 @@
 import uuid
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, ConfigDict, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -64,7 +66,56 @@ async def register(
     "/login",
     response_model=TokenResponse,
     summary="Login user",
-    description="Authenticate a user with email and password and return JWT tokens.",
+    description=(
+        "Authenticate using the OAuth2 password flow. "
+        "Enter your **email address** in the `username` field and your account password."
+    ),
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/x-www-form-urlencoded": {
+                    "schema": {
+                        "type": "object",
+                        "required": ["username", "password"],
+                        "properties": {
+                            "grant_type": {
+                                "type": "string",
+                                "default": "password",
+                                "description": "OAuth2 grant type. Use `password` for login.",
+                            },
+                            "username": {
+                                "type": "string",
+                                "format": "email",
+                                "title": "Email",
+                                "description": "User email address. OAuth2 requires this field to be named `username`.",
+                                "example": "user@example.com",
+                            },
+                            "password": {
+                                "type": "string",
+                                "format": "password",
+                                "description": "Account password.",
+                            },
+                            "scope": {
+                                "type": "string",
+                                "description": "Optional OAuth2 scopes.",
+                                "default": "",
+                            },
+                            "client_id": {
+                                "type": "string",
+                                "description": "Optional OAuth2 client ID.",
+                            },
+                            "client_secret": {
+                                "type": "string",
+                                "format": "password",
+                                "description": "Optional OAuth2 client secret.",
+                            },
+                        },
+                    }
+                }
+            },
+        }
+    },
     responses={
         status.HTTP_200_OK: {"description": "Login successful."},
         status.HTTP_401_UNAUTHORIZED: {"description": "Invalid credentials."},
@@ -72,11 +123,13 @@ async def register(
     },
 )
 async def login(
-    payload: LoginRequest,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     service: AuthService = Depends(get_auth_service),
 ) -> TokenResponse:
     try:
-        return await service.login(payload)
+        return await service.login(
+            LoginRequest(email=form_data.username, password=form_data.password)
+        )
     except InvalidCredentialsError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
