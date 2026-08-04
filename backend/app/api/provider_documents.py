@@ -86,7 +86,11 @@ async def upload_provider_document(
         )
 
     try:
-        file_path = await save_provider_upload_file(provider.id, file)
+        file_path = await save_provider_upload_file(
+            provider.id,
+            file,
+            document_type=document_type.value,
+        )
     except (InvalidFileExtensionError, FileTooLargeError, InvalidFilenameError) as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

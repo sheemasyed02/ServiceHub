@@ -73,13 +73,17 @@ def save_provider_file(
     return str(Path("uploads") / "providers" / str(provider_id) / unique_filename).replace("\\", "/")
 
 
-async def save_provider_upload_file(provider_id: uuid.UUID, file: UploadFile) -> str:
-    if not file.filename:
-        raise InvalidFilenameError("Filename is required.")
+async def save_provider_upload_file(
+    provider_id: uuid.UUID,
+    file: UploadFile,
+    *,
+    document_type: str = "DOCUMENT",
+) -> str:
+    from app.services.provider_document_service import ProviderDocumentService
 
-    content = await file.read()
-    return save_provider_file(
-        provider_id,
-        filename=file.filename,
-        content=content,
+    document_service = ProviderDocumentService()
+    return await document_service.upload_to_storage(
+        provider_id=provider_id,
+        document_type=document_type,
+        file=file,
     )
