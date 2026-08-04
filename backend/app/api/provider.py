@@ -1,18 +1,25 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_db
+from app.dependencies.auth import get_current_user
 from app.dependencies.roles import require_admin, require_provider
+from app.models.provider_document import ProviderDocument
 from app.models.user import User
 from app.repositories.provider_repository import ProviderRepository
 from app.schemas.provider import (
+    ApiVerificationStatus,
     ProviderApprovalRequest,
+    ProviderApprovalResponse,
+    ProviderProfileResponse,
     ProviderRegistrationRequest,
+    ProviderRegistrationResponse,
     ProviderRejectionRequest,
-    ProviderResponse,
+    ProviderRejectionResponse,
 )
 from app.services.provider_service import (
     ProviderAlreadyExistsError,
@@ -29,39 +36,60 @@ def get_provider_service(db: AsyncSession = Depends(get_db)) -> ProviderService:
     return ProviderService(ProviderRepository(db))
 
 
+def _to_api_verification_status(status: str) -> ApiVerificationStatus:
+    return ApiVerificationStatus(status.upper())
+
+
+async def _load_provider_documents(
+    service: ProviderService,
+    provider_id: uuid.UUID,
+) -> list[ProviderDocument]:
+    result = await service.repository.db.execute(
+        select(ProviderDocument).where(ProviderDocument.provider_id == provider_id)
+    )
+    return list(result.scalars().all())
+
+
 @provider_router.post(
     "/register",
-    response_model=ProviderResponse,
+    response_model=ProviderRegistrationResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Register provider profile",
-    description="Create a provider profile for the authenticated provider user.",
+    description="Create a provider profile for any authenticated user and promote their account to the provider role.",
     responses={
         status.HTTP_201_CREATED: {"description": "Provider registered successfully."},
+        status.HTTP_401_UNAUTHORIZED: {"description": "Authentication required."},
         status.HTTP_409_CONFLICT: {"description": "Provider profile already exists."},
-        status.HTTP_403_FORBIDDEN: {"description": "Provider access required."},
     },
 )
 async def register_provider(
-    payload: ProviderRegistrationRequest,
-    current_user: Annotated[User, Depends(require_provider)],
+    payload: Annotated[
+        ProviderRegistrationRequest,
+        Body(..., description="Provider profile details submitted during registration."),
+    ],
+    current_user: Annotated[User, Depends(get_current_user)],
     service: ProviderService = Depends(get_provider_service),
-) -> ProviderResponse:
+) -> ProviderRegistrationResponse:
     try:
-        provider = await service.register_provider(current_user.id, payload)
+        provider = await service.register_provider(current_user, payload)
     except ProviderAlreadyExistsError as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),
         ) from exc
 
-    return ProviderResponse.model_validate(provider)
+    return ProviderRegistrationResponse(
+        provider_id=provider.id,
+        verification_status=_to_api_verification_status(provider.verification_status),
+        message="Provider profile created successfully",
+    )
 
 
 @provider_router.get(
     "/me",
-    response_model=ProviderResponse,
+    response_model=ProviderProfileResponse,
     summary="Get current provider profile",
-    description="Return the provider profile for the authenticated provider user.",
+    description="Return the complete provider profile for the authenticated provider user.",
     responses={
         status.HTTP_200_OK: {"description": "Provider profile returned."},
         status.HTTP_404_NOT_FOUND: {"description": "Provider profile not found."},
@@ -71,7 +99,7 @@ async def register_provider(
 async def get_my_provider(
     current_user: Annotated[User, Depends(require_provider)],
     service: ProviderService = Depends(get_provider_service),
-) -> ProviderResponse:
+) -> ProviderProfileResponse:
     provider = await service.repository.get_provider_by_user_id(current_user.id)
     if provider is None:
         raise HTTPException(
@@ -79,12 +107,13 @@ async def get_my_provider(
             detail="Provider profile not found.",
         )
 
-    return ProviderResponse.model_validate(provider)
+    documents = await _load_provider_documents(service, provider.id)
+    return ProviderProfileResponse.from_provider(provider, documents)
 
 
 @admin_router.get(
     "/pending",
-    response_model=list[ProviderResponse],
+    response_model=list[ProviderProfileResponse],
     summary="List pending providers",
     description="Return all provider profiles awaiting admin verification.",
     responses={
@@ -95,14 +124,14 @@ async def get_my_provider(
 async def list_pending_providers(
     _: Annotated[User, Depends(require_admin)],
     service: ProviderService = Depends(get_provider_service),
-) -> list[ProviderResponse]:
+) -> list[ProviderProfileResponse]:
     providers = await service.repository.list_pending_providers()
-    return [ProviderResponse.model_validate(provider) for provider in providers]
+    return [ProviderProfileResponse.from_provider(provider) for provider in providers]
 
 
 @admin_router.patch(
     "/{provider_id}/approve",
-    response_model=ProviderResponse,
+    response_model=ProviderApprovalResponse,
     summary="Approve provider",
     description="Approve a pending provider profile.",
     responses={
@@ -113,13 +142,19 @@ async def list_pending_providers(
     },
 )
 async def approve_provider(
-    provider_id: uuid.UUID,
-    payload: ProviderApprovalRequest,
+    provider_id: Annotated[
+        uuid.UUID,
+        Path(..., description="Unique identifier of the provider profile to approve."),
+    ],
+    payload: Annotated[
+        ProviderApprovalRequest,
+        Body(..., description="Approval details including optional admin remarks."),
+    ],
     current_user: Annotated[User, Depends(require_admin)],
     service: ProviderService = Depends(get_provider_service),
-) -> ProviderResponse:
+) -> ProviderApprovalResponse:
     try:
-        provider = await service.approve_provider(provider_id, current_user.id, payload)
+        await service.approve_provider(provider_id, current_user.id, payload)
     except ProviderNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -131,12 +166,12 @@ async def approve_provider(
             detail=str(exc),
         ) from exc
 
-    return ProviderResponse.model_validate(provider)
+    return ProviderApprovalResponse(message="Provider approved successfully")
 
 
 @admin_router.patch(
     "/{provider_id}/reject",
-    response_model=ProviderResponse,
+    response_model=ProviderRejectionResponse,
     summary="Reject provider",
     description="Reject a pending provider profile.",
     responses={
@@ -147,13 +182,19 @@ async def approve_provider(
     },
 )
 async def reject_provider(
-    provider_id: uuid.UUID,
-    payload: ProviderRejectionRequest,
+    provider_id: Annotated[
+        uuid.UUID,
+        Path(..., description="Unique identifier of the provider profile to reject."),
+    ],
+    payload: Annotated[
+        ProviderRejectionRequest,
+        Body(..., description="Rejection details including required admin remarks."),
+    ],
     current_user: Annotated[User, Depends(require_admin)],
     service: ProviderService = Depends(get_provider_service),
-) -> ProviderResponse:
+) -> ProviderRejectionResponse:
     try:
-        provider = await service.reject_provider(provider_id, current_user.id, payload)
+        await service.reject_provider(provider_id, current_user.id, payload)
     except ProviderNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -165,4 +206,4 @@ async def reject_provider(
             detail=str(exc),
         ) from exc
 
-    return ProviderResponse.model_validate(provider)
+    return ProviderRejectionResponse(message="Provider rejected")

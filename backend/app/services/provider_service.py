@@ -1,12 +1,14 @@
 import uuid
 
 from app.models.provider import Provider
+from app.models.user import User
 from app.models.verification_history import VerificationHistory
 from app.repositories.provider_repository import ProviderRepository
 from app.schemas.provider import (
     ProviderApprovalRequest,
     ProviderRegistrationRequest,
     ProviderRejectionRequest,
+    ProviderResponse,
     VerificationStatus,
 )
 
@@ -38,19 +40,34 @@ class ProviderService:
 
     async def register_provider(
         self,
-        user_id: uuid.UUID,
+        user: User,
         data: ProviderRegistrationRequest,
     ) -> Provider:
-        await self.validate_existing_provider(user_id)
+        await self.validate_existing_provider(user.id)
 
         provider = await self.repository.create_provider(
-            user_id=user_id,
+            user_id=user.id,
+            business_name=data.business_name,
+            primary_service=data.primary_service,
+            secondary_services=data.secondary_services,
+            profile_photo_url=data.profile_photo_url,
             bio=data.bio,
             experience_years=data.experience_years,
             working_radius=data.working_radius,
             latitude=data.latitude,
             longitude=data.longitude,
+            address_line1=data.address_line1,
+            address_line2=data.address_line2,
+            city=data.city,
+            state=data.state,
+            pincode=data.pincode,
+            country=data.country,
+            gender=data.gender,
+            date_of_birth=data.date_of_birth,
         )
+
+        if user.role != "provider":
+            await self.repository.update_user_role(user.id, "provider")
 
         await self.record_verification_history(
             provider_id=provider.id,
@@ -121,6 +138,9 @@ class ProviderService:
         )
         await self.repository.commit()
         return rejected_provider
+
+    def build_provider_response(self, provider: Provider) -> ProviderResponse:
+        return ProviderResponse.from_provider(provider)
 
     async def record_verification_history(
         self,
