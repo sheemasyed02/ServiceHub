@@ -10,6 +10,7 @@ from alembic import context
 from app.core.settings import settings
 from app.database.base import Base
 from app.models import User  # noqa: F401
+from app.models.booking import Booking  # noqa: F401
 from app.models.provider import Provider  # noqa: F401
 from app.models.provider_document import ProviderDocument  # noqa: F401
 from app.models.verification_history import VerificationHistory  # noqa: F401
